@@ -10,10 +10,61 @@ config_version=5
 
 [application]
 
-config/name="Лабубик вакукик"
+config/name="The Evolution of Labubu: Wakuku"
+config/description="Инкрементальная игра-кликер"
+config/version="1.0.0"
+run/main_scene="uid://bqxvhxqxqxqxq"
 config/features=PackedStringArray("4.4", "GL Compatibility")
+run/max_fps=30
+run/enable_pause=true
+
+[audio]
+
+driver/driver="Web"
+driver/mix_rate=22050
+driver/enable_audio_input=false
+
+[autoload]
+
+EventBus="*res://scripts/autoload/event_bus.gd"
+SaveSystem="*res://scripts/autoload/save_system.gd"
+GameManager="*res://scripts/autoload/game_manager.gd"
+
+[debug]
+
+settings/stdout/verbose_output=false
+
+[display]
+
+window/size/viewport_width=360
+window/size/viewport_height=640
+window/size/mode=2
+window/size/window_width_override=360
+window/size/window_height_override=640
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+
+[editor]
+
+interface/editor/screen=0
+interface/editor/show_script_button=true
+
+[export]
+
+filter/export_resources=true
+resources/compression_mode=1
+
+[input_devices]
+
+pointing/emulate_touch_from_mouse=true
+pointing/unified_input=true
+
+[physics]
+
+common/physics_ticks_per_second=30
 
 [rendering]
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+renderer/rendering/driver="GLES2"
