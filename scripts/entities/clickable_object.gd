@@ -21,6 +21,9 @@ func _on_input_event(viewport: Viewport, event: InputEvent, shape_idx: int) -> v
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		print("ClickableObject: Обработка клика мыши")
 		perform_click()
+	elif event is InputEventScreenTouch and event.pressed:
+		print("ClickableObject: Обработка тач-нажатия")
+		perform_click()
 
 # Обработка входа мыши
 func _on_mouse_entered() -> void:
