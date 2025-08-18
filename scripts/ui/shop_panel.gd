@@ -35,7 +35,8 @@ func _load_upgrades() -> void:
 		upgrades = {}
 
 func _render_items() -> void:
-	list_container.queue_free_children()
+	for child in list_container.get_children():
+		child.queue_free()
 	for upg_id in upgrades.keys():
 		var data: Dictionary = upgrades[upg_id]
 		var h := HBoxContainer.new()
@@ -77,4 +78,3 @@ func _on_buy_pressed(upg_id: String) -> void:
 		GameManager.apply_upgrade_effect(stat, value)
 	EventBus.emit_signal("upgrade_purchased", upg_id)
 	_render_items()
-

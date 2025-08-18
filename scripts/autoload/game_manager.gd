@@ -131,6 +131,19 @@ func load_save_data(data: Dictionary) -> void:
 	
 	# Апгрейды
 	purchased_upgrades = data.get("purchased_upgrades", {})
+	# Применяем эффекты апгрейдов повторно для консистентности
+	# Сбрасываем базовые множители перед применением
+	click_multiplier = data.get("click_multiplier", 1.0)
+	for upg_id in purchased_upgrades.keys():
+		var level: int = int(purchased_upgrades[upg_id])
+		# Применяем эффект level раз (упрощённо)
+		# Для точности позже переведём на агрегатор множителей
+		if upg_id == "upg_click_1":
+			for i in level:
+				apply_upgrade_effect("click_multiplier", 0.2)
+		elif upg_id == "upg_click_2":
+			for i in level:
+				apply_upgrade_effect("click_multiplier", 0.5)
 	
 	# Обновление авто-кликов
 	if auto_click_rate > 0:
@@ -161,6 +174,8 @@ func reset_game() -> void:
 	total_clicks = 0
 	total_currency_earned = 0
 	game_start_time = Time.get_unix_time_from_system()
+	# Сброс купленных апгрейдов
+	purchased_upgrades = {}
 	
 	auto_click_timer.stop()
 	
