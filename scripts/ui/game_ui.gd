@@ -6,10 +6,12 @@ extends Node2D
 @onready var currency_display: Label = $UI/HUD/CurrencyDisplay
 @onready var level_display: Label = $UI/HUD/LevelDisplay
 @onready var menu_button: Button = $UI/HUD/MenuButton
+@onready var shop_button: Button = $UI/HUD/ShopButton
 
 func _ready() -> void:
 	# Подключение сигналов
 	menu_button.pressed.connect(_on_menu_button_pressed)
+	shop_button.pressed.connect(_on_shop_button_pressed)
 	
 	# Подключение сигналов GameManager для обновления UI
 	EventBus.currency_changed.connect(_on_currency_changed)
@@ -33,6 +35,12 @@ func _on_menu_button_pressed() -> void:
 	
 	# Переходим обратно в главное меню
 	get_tree().change_scene_to_file("res://scenes/main/main_menu.tscn")
+
+# Открытие магазина
+func _on_shop_button_pressed() -> void:
+	var shop_scene: PackedScene = load("res://scenes/ui/shop_panel.tscn")
+	var shop: Control = shop_scene.instantiate()
+	$UI.add_child(shop)
 
 # Обновление отображения валюты
 func update_currency_display() -> void:

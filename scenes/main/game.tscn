@@ -56,6 +56,18 @@ offset_bottom = 130.0
 grow_horizontal = 0
 text = "Меню"
 
+[node name="ShopButton" type="Button" parent="UI/HUD"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -100.0
+offset_top = 140.0
+offset_right = -20.0
+offset_bottom = 170.0
+grow_horizontal = 0
+text = "Магазин"
+
 [node name="GameArea" type="Node2D" parent="."]
 
 [node name="ClickableObject" parent="GameArea" instance=ExtResource("2_0x0x0")]

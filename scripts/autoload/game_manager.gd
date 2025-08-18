@@ -18,6 +18,9 @@ var total_clicks: int = 0
 var total_currency_earned: int = 0
 var game_start_time: int = 0
 
+# Покупки апгрейдов: хранит уровень каждого апгрейда по его id
+var purchased_upgrades: Dictionary = {}
+
 func _ready() -> void:
 	# Инициализация таймера для авто-кликов
 	auto_click_timer = Timer.new()
@@ -110,7 +113,8 @@ func get_save_data() -> Dictionary:
 		"auto_click_rate": auto_click_rate,
 		"total_clicks": total_clicks,
 		"total_currency_earned": total_currency_earned,
-		"game_start_time": game_start_time
+		"game_start_time": game_start_time,
+		"purchased_upgrades": purchased_upgrades
 	}
 
 # Загрузка данных
@@ -125,6 +129,9 @@ func load_save_data(data: Dictionary) -> void:
 	total_currency_earned = data.get("total_currency_earned", 0)
 	game_start_time = data.get("game_start_time", 0)
 	
+	# Апгрейды
+	purchased_upgrades = data.get("purchased_upgrades", {})
+	
 	# Обновление авто-кликов
 	if auto_click_rate > 0:
 		auto_click_timer.start()
@@ -133,6 +140,15 @@ func load_save_data(data: Dictionary) -> void:
 	EventBus.emit_signal("currency_changed", current_currency)
 	EventBus.emit_signal("level_up", current_level)
 	EventBus.emit_signal("game_state_changed")
+
+# Получить уровень апгрейда
+func get_upgrade_level(upgrade_id: String) -> int:
+	return int(purchased_upgrades.get(upgrade_id, 0))
+
+# Увеличить уровень апгрейда (без списания валюты)
+func increment_upgrade_level(upgrade_id: String) -> void:
+	var level: int = get_upgrade_level(upgrade_id) + 1
+	purchased_upgrades[upgrade_id] = level
 
 # Сброс игры
 func reset_game() -> void:
