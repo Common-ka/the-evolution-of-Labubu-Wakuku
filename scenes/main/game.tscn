@@ -1,9 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://c8xvhxqxqxqxq"]
+[gd_scene load_steps=3 format=3 uid="uid://c8xvhxqxqxqxq"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_c7aoy"]
-radius = 36.0139
+[ext_resource type="Script" uid="uid://bpl81ij341yvq" path="res://scripts/ui/game_ui.gd" id="1_0x0x0"]
+[ext_resource type="PackedScene" uid="uid://brnpomk1x2pks" path="res://scenes/entities/clickable_object.tscn" id="2_0x0x0"]
 
 [node name="Game" type="Node2D"]
+script = ExtResource("1_0x0x0")
 
 [node name="UI" type="CanvasLayer" parent="."]
 
@@ -14,6 +15,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
 [node name="CurrencyDisplay" type="Label" parent="UI/HUD"]
 layout_mode = 1
@@ -55,15 +57,8 @@ text = "Меню"
 
 [node name="GameArea" type="Node2D" parent="."]
 
-[node name="ClickableObject" type="Area2D" parent="GameArea"]
+[node name="ClickableObject" parent="GameArea" instance=ExtResource("2_0x0x0")]
 position = Vector2(180, 320)
-
-[node name="Triangle" type="Polygon2D" parent="GameArea/ClickableObject"]
-polygon = PackedVector2Array(0, -30, -25, 25, 25, 25)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="GameArea/ClickableObject"]
-position = Vector2(0, 4)
-shape = SubResource("CircleShape2D_c7aoy")
 
 [node name="Background" type="ColorRect" parent="."]
 anchors_preset = 15
