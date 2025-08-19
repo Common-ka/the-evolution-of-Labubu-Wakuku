@@ -75,6 +75,8 @@ func _on_buy_pressed(upg_id: String) -> void:
 	var stat := String(data.get("stat", ""))
 	var value := float(data.get("value", 0.0))
 	if stat != "":
+		print("[ShopPanel] purchase ", upg_id, ": applying ", stat, " +", value)
 		GameManager.apply_upgrade_effect(stat, value)
+		print("[ShopPanel] after apply: click_multiplier=", GameManager.click_multiplier, ", level=", GameManager.get_upgrade_level(upg_id))
 	EventBus.emit_signal("upgrade_purchased", upg_id)
 	_render_items()

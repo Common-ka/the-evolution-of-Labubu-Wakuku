@@ -1,23 +1,22 @@
 {
   "upg_click_1": {
-    "name": "Сильнее палец I",
-    "stat": "click_multiplier",
-    "stack": "mul",
-    "value": 0.2,
-    "base_cost": 10,
-    "growth": 2.5,
-    "max_level": 10,
-    "currency": "soft"
+	"name": "Сильнее палец I",
+	"stat": "click_multiplier",
+	"stack": "mul",
+	"value": 0.2,
+	"base_cost": 10,
+	"growth": 2.5,
+	"max_level": 10,
+	"currency": "soft"
   },
   "upg_click_2": {
-    "name": "Сильнее палец II",
-    "stat": "click_multiplier",
-    "stack": "mul",
-    "value": 0.5,
-    "base_cost": 50,
-    "growth": 2.5,
-    "max_level": 10,
-    "currency": "soft"
+	"name": "Сильнее палец II",
+	"stat": "click_multiplier",
+	"stack": "mul",
+	"value": 0.5,
+	"base_cost": 50,
+	"growth": 2.5,
+	"max_level": 10,
+	"currency": "soft"
   }
 }
-

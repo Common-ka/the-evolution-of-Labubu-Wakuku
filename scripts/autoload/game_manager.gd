@@ -32,6 +32,9 @@ func _ready() -> void:
 	EventBus.click_performed.connect(_on_click_performed)
 	EventBus.upgrade_purchased.connect(_on_upgrade_purchased)
 	
+	# Отладочная информация
+	print("[GameManager] _ready: click_multiplier = ", click_multiplier)
+	
 	# Запуск авто-кликов если есть
 	if auto_click_rate > 0:
 		auto_click_timer.start()
@@ -39,6 +42,7 @@ func _ready() -> void:
 # Обработка клика игрока
 func perform_click() -> void:
 	var click_value: int = get_click_value()
+	print("[GameManager] perform_click: click_multiplier=", click_multiplier, ", click_value=", click_value)
 	current_currency += click_value
 	total_clicks += 1
 	total_currency_earned += click_value
@@ -53,7 +57,7 @@ func perform_click() -> void:
 
 # Получение значения клика
 func get_click_value() -> int:
-	return int(1 * click_multiplier)
+	return int(ceil(5.0 * click_multiplier))
 
 # Добавление валюты
 func add_currency(amount: int) -> void:
@@ -90,17 +94,19 @@ func level_up() -> void:
 func calculate_next_level_exp() -> int:
 	return int(100 * pow(1.2, current_level - 1))
 
-# Применение эффекта апгрейда
-func apply_upgrade_effect(upgrade_id: String, effect_value: float) -> void:
-	match upgrade_id:
+# Применение эффекта апгрейда по статистике
+func apply_upgrade_effect(stat: String, effect_value: float) -> void:
+	match stat:
 		"click_multiplier":
+			var before := click_multiplier
 			click_multiplier += effect_value
+			print("[GameManager] apply_upgrade_effect: ", stat, " +", effect_value, " => ", before, " -> ", click_multiplier)
 		"auto_click_rate":
 			auto_click_rate += effect_value
 			if auto_click_rate > 0 and not auto_click_timer.is_stopped():
 				auto_click_timer.start()
 	
-	EventBus.emit_signal("upgrade_effect_applied", upgrade_id, effect_value)
+	EventBus.emit_signal("upgrade_effect_applied", stat, effect_value)
 
 # Получение данных для сохранения
 func get_save_data() -> Dictionary:
@@ -133,11 +139,10 @@ func load_save_data(data: Dictionary) -> void:
 	purchased_upgrades = data.get("purchased_upgrades", {})
 	# Применяем эффекты апгрейдов повторно для консистентности
 	# Сбрасываем базовые множители перед применением
-	click_multiplier = data.get("click_multiplier", 1.0)
+	click_multiplier = 1.0  # Сбрасываем к базовому значению
 	for upg_id in purchased_upgrades.keys():
 		var level: int = int(purchased_upgrades[upg_id])
-		# Применяем эффект level раз (упрощённо)
-		# Для точности позже переведём на агрегатор множителей
+		# Применяем эффект level раз для каждого апгрейда
 		if upg_id == "upg_click_1":
 			for i in level:
 				apply_upgrade_effect("click_multiplier", 0.2)
@@ -176,6 +181,8 @@ func reset_game() -> void:
 	game_start_time = Time.get_unix_time_from_system()
 	# Сброс купленных апгрейдов
 	purchased_upgrades = {}
+	
+	print("[GameManager] reset_game: click_multiplier reset to ", click_multiplier)
 	
 	auto_click_timer.stop()
 	
