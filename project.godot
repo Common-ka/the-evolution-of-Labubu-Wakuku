@@ -29,6 +29,7 @@ driver/enable_audio_input=false
 EventBus="*res://scripts/autoload/event_bus.gd"
 SaveSystem="*res://scripts/autoload/save_system.gd"
 GameManager="*res://scripts/autoload/game_manager.gd"
+FloatingTextPool="*res://scripts/autoload/floating_text_pool.gd"
 
 [debug]
 

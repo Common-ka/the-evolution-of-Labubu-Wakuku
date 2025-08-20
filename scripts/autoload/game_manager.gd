@@ -192,8 +192,38 @@ func reset_game() -> void:
 
 # Сигналы
 func _on_click_performed(amount: int) -> void:
-	# Обработка клика (может быть расширена)
-	pass
+	# Создаем Floating Text для показа получаемой валюты
+	_create_floating_text(amount)
+
+# Создание Floating Text
+func _create_floating_text(click_value: int) -> void:
+	# Получаем позицию кликабельного объекта
+	var game_scene = get_tree().current_scene
+	if not game_scene:
+		print("[GameManager] Не удалось найти текущую сцену")
+		return
+	
+	var clickable_object = game_scene.get_node_or_null("GameArea/ClickableObject")
+	if not clickable_object:
+		print("[GameManager] Не удалось найти ClickableObject")
+		return
+	
+	# Получаем мировую позицию объекта
+	var world_position = clickable_object.global_position
+	
+	# Создаем Floating Text из пула
+	var floating_text = FloatingTextPool.get_floating_text()
+	
+	# Добавляем в UI сцены
+	var ui_node = game_scene.get_node_or_null("UI")
+	if ui_node:
+		ui_node.add_child(floating_text)
+		floating_text.show_value(click_value, world_position)
+		print("[GameManager] Создан Floating Text для значения: ", click_value)
+	else:
+		print("[GameManager] Не удалось найти UI узел")
+		# Возвращаем объект в пул если не удалось добавить
+		FloatingTextPool.return_text_to_pool(floating_text)
 
 func _on_upgrade_purchased(upgrade_id: String) -> void:
 	# Обработка покупки апгрейда (будет расширена)
