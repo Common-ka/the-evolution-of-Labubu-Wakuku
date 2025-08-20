@@ -44,6 +44,10 @@ func return_text_to_pool(text: Control) -> void:
 	# Убираем из активных
 	active_texts.erase(text)
 	
+	# Удаляем текст из сцены перед возвратом в пул
+	if text.get_parent():
+		text.get_parent().remove_child(text)
+	
 	# Возвращаем в пул или удаляем
 	if available_texts.size() < MAX_POOL_SIZE:
 		available_texts.append(text)
