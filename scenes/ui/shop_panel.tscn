@@ -1,6 +1,13 @@
-[gd_scene load_steps=2 format=3 uid="uid://cqje5aaty2dw1"]
+[gd_scene load_steps=3 format=3 uid="uid://cqje5aaty2dw1"]
 
 [ext_resource type="Script" uid="uid://bcwora42ia56k" path="res://scripts/ui/shop_panel.gd" id="1_0"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1"]
+bg_color = Color(0.5, 0.5, 0.5, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
 [node name="ShopPanel" type="Control"]
 layout_mode = 3
@@ -13,7 +20,7 @@ mouse_filter = 1
 script = ExtResource("1_0")
 
 [node name="Panel" type="Panel" parent="."]
-self_modulate = Color(0.367945, 0.0561938, 0.0812309, 1)
+self_modulate = Color(0.5, 0.5, 0.5, 1)
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -26,9 +33,15 @@ offset_right = 180.0
 offset_bottom = 240.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1")
 
 [node name="Margin" type="MarginContainer" parent="Panel"]
-layout_mode = 2
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_constants/margin_left = 12
 theme_override_constants/margin_top = 12
 theme_override_constants/margin_right = 12
@@ -50,4 +63,5 @@ size_flags_vertical = 3
 
 [node name="CloseButton" type="Button" parent="Panel/Margin/VBox"]
 layout_mode = 2
+size_flags_horizontal = 3
 text = "Закрыть"

@@ -9,6 +9,7 @@ var upgrades: Dictionary = {}
 
 func _ready() -> void:
 	close_button.pressed.connect(_on_close_pressed)
+	
 	_load_upgrades()
 	_render_items()
 
@@ -41,6 +42,7 @@ func _render_items() -> void:
 		var data: Dictionary = upgrades[upg_id]
 		var h := HBoxContainer.new()
 		h.custom_minimum_size = Vector2(0, 32)
+		h.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 		var name_label := Label.new()
 		name_label.text = "%s (ур.%d)" % [String(data.get("name", upg_id)), GameManager.get_upgrade_level(upg_id)]
 		name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
