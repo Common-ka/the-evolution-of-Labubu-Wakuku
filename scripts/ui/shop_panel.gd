@@ -6,15 +6,57 @@ var upgrades: Dictionary = {}
 
 @onready var list_container: VBoxContainer = $Panel/Margin/VBox/Items
 @onready var close_button: Button = $Panel/Margin/VBox/CloseButton
+@onready var overlay: ColorRect = $Overlay
+@onready var panel: Panel = $Panel
+
+var _show_tween: SceneTreeTween
+var _hide_tween: SceneTreeTween
+const SHOW_DURATION := 0.22
+const HIDE_DURATION := 0.18
+const SCALE_MIN := 0.95
 
 func _ready() -> void:
 	close_button.pressed.connect(_on_close_pressed)
+	
+	_prepare_initial_state()
 	
 	_load_upgrades()
 	_render_items()
 
 func _on_close_pressed() -> void:
-	queue_free()
+	animate_hide()
+
+func _prepare_initial_state() -> void:
+	overlay.visible = true
+	overlay.modulate.a = 0.0
+	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+	panel.visible = true
+	panel.scale = Vector2(SCALE_MIN, SCALE_MIN)
+	panel.modulate.a = 0.0
+	animate_show()
+
+func animate_show() -> void:
+	if _hide_tween:
+		_hide_tween.kill()
+	if _show_tween:
+		_show_tween.kill()
+	_show_tween = create_tween()
+	_show_tween.set_parallel(true)
+	_show_tween.tween_property(overlay, "modulate:a", 1.0, SHOW_DURATION).set_ease(Tween.EASE_OUT)
+	_show_tween.tween_property(panel, "modulate:a", 1.0, SHOW_DURATION).set_ease(Tween.EASE_OUT)
+	_show_tween.tween_property(panel, "scale", Vector2(1, 1), SHOW_DURATION).set_ease(Tween.EASE_OUT)
+
+func animate_hide() -> void:
+	if _show_tween:
+		_show_tween.kill()
+	if _hide_tween:
+		_hide_tween.kill()
+	_hide_tween = create_tween()
+	_hide_tween.set_parallel(true)
+	_hide_tween.tween_property(overlay, "modulate:a", 0.0, HIDE_DURATION).set_ease(Tween.EASE_IN)
+	_hide_tween.tween_property(panel, "modulate:a", 0.0, HIDE_DURATION).set_ease(Tween.EASE_IN)
+	_hide_tween.tween_property(panel, "scale", Vector2(SCALE_MIN, SCALE_MIN), HIDE_DURATION).set_ease(Tween.EASE_IN)
+	_hide_tween.finished.connect(func(): queue_free())
 
 func _load_upgrades() -> void:
 	var path := "res://data/upgrades.json"
