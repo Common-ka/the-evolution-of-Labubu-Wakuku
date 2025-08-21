@@ -56,6 +56,9 @@ func perform_click() -> void:
 	# Создаем визуальный эффект клика
 	create_click_effect()
 	
+	# Создаем эффект частиц
+	create_particle_effect()
+	
 	# Создаем анимацию масштабирования
 	create_scale_animation()
 
@@ -69,6 +72,14 @@ func create_click_effect() -> void:
 	# Возвращаем исходный цвет через 0.1 секунды
 	await get_tree().create_timer(0.1).timeout
 	triangle.color = original_color
+
+# Создание эффекта частиц
+func create_particle_effect() -> void:
+	# Создаем эффект частиц через ParticleManager
+	ParticleManager.create_click_effect(global_position)
+	
+	# Эмитируем сигнал для других систем
+	EventBus.emit_signal("particle_effect_requested", "click_stars", global_position)
 
 # Создание улучшенной анимации масштабирования и ротации
 func create_scale_animation() -> void:

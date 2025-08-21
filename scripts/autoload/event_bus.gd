@@ -29,6 +29,9 @@ signal play_sound(sound_name: String)
 signal play_music(music_name: String)
 signal stop_music
 
+# Эффекты частиц
+signal particle_effect_requested(effect_type: String, position: Vector2)
+
 # Достижения
 signal achievement_progress_updated(achievement_id: String, progress: float)
 signal achievement_condition_met(achievement_id: String)

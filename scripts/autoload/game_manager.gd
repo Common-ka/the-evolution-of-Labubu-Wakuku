@@ -31,6 +31,7 @@ func _ready() -> void:
 	# Подключение сигналов
 	EventBus.click_performed.connect(_on_click_performed)
 	EventBus.upgrade_purchased.connect(_on_upgrade_purchased)
+	EventBus.particle_effect_requested.connect(_on_particle_effect_requested)
 	
 	# Отладочная информация
 	print("[GameManager] _ready: click_multiplier = ", click_multiplier)
@@ -228,6 +229,11 @@ func _create_floating_text(click_value: int) -> void:
 func _on_upgrade_purchased(upgrade_id: String) -> void:
 	# Обработка покупки апгрейда (будет расширена)
 	pass
+
+# Обработчик запроса эффекта частиц
+func _on_particle_effect_requested(effect_type: String, position: Vector2) -> void:
+	print("[GameManager] Запрошен эффект частиц: ", effect_type, " в позиции: ", position)
+	# Здесь можно добавить дополнительную логику для разных типов эффектов
 
 func _on_auto_click_timer_timeout() -> void:
 	if auto_click_rate > 0:
