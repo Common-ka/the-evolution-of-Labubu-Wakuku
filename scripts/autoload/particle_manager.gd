@@ -48,6 +48,22 @@ func create_click_effect(position: Vector2) -> void:
 	effect.global_position = position
 	effect.setup_effect("click_stars")
 	
+	# КРИТИЧНО: Добавляем эффект в текущую сцену!
+	var current_scene = get_tree().current_scene
+	if current_scene:
+		# Добавляем в UI слой для правильного отображения
+		var ui_node = current_scene.get_node_or_null("UI")
+		if ui_node:
+			ui_node.add_child(effect)
+			print("[ParticleManager] Эффект добавлен в UI сцены")
+		else:
+			# Fallback: добавляем в корень сцены
+			current_scene.add_child(effect)
+			print("[ParticleManager] Эффект добавлен в корень сцены")
+	else:
+		print("[ParticleManager] ОШИБКА: Не удалось найти текущую сцену")
+		return
+	
 	# Добавляем в активные
 	active_effects.append(effect)
 	

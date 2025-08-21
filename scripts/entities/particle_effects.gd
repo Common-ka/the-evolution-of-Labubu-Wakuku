@@ -56,11 +56,14 @@ func setup_effect(effect_type: String) -> void:
 
 # Настройка эффекта звездочек для клика
 func _setup_click_stars() -> void:
+	print("[ParticleEffects] Настройка эффекта звездочек")
+	
 	# Настройка частиц
 	particles.amount = 4
 	particles.lifetime = 0.8
 	particles.explosiveness = 0.8
 	particles.randomness = 0.3
+	particles.emission_shape = CPUParticles2D.EMISSION_SHAPE_SPHERE
 	
 	# Направление и разброс
 	particles.direction = Vector2(0, -1)
@@ -81,9 +84,10 @@ func _setup_click_stars() -> void:
 	# Гравитация (легкое падение)
 	particles.gravity = Vector2(0, 98)
 	
-	# Цвета (золотые/оранжевые оттенки)
-	var colors = [Color.GOLD, Color.ORANGE, Color.YELLOW, Color(1.0, 0.42, 0.21)]
-	particles.color_initial_ramp = _create_color_ramp(colors)
+	# Базовый цвет - белый (будет виден без текстуры)
+	particles.color = Color.WHITE
+	
+	print("[ParticleEffects] Эффект звездочек настроен успешно")
 
 # Создание градиента цветов
 func _create_color_ramp(colors: Array) -> Gradient:
