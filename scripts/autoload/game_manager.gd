@@ -33,9 +33,6 @@ func _ready() -> void:
 	EventBus.upgrade_purchased.connect(_on_upgrade_purchased)
 	EventBus.particle_effect_requested.connect(_on_particle_effect_requested)
 	
-	# Отладочная информация
-	print("[GameManager] _ready: click_multiplier = ", click_multiplier)
-	
 	# Запуск авто-кликов если есть
 	if auto_click_rate > 0:
 		auto_click_timer.start()
@@ -43,7 +40,7 @@ func _ready() -> void:
 # Обработка клика игрока
 func perform_click() -> void:
 	var click_value: int = get_click_value()
-	print("[GameManager] perform_click: click_multiplier=", click_multiplier, ", click_value=", click_value)
+
 	current_currency += click_value
 	total_clicks += 1
 	total_currency_earned += click_value
@@ -101,7 +98,7 @@ func apply_upgrade_effect(stat: String, effect_value: float) -> void:
 		"click_multiplier":
 			var before := click_multiplier
 			click_multiplier += effect_value
-			print("[GameManager] apply_upgrade_effect: ", stat, " +", effect_value, " => ", before, " -> ", click_multiplier)
+
 		"auto_click_rate":
 			auto_click_rate += effect_value
 			if auto_click_rate > 0 and not auto_click_timer.is_stopped():
@@ -182,8 +179,6 @@ func reset_game() -> void:
 	game_start_time = Time.get_unix_time_from_system()
 	# Сброс купленных апгрейдов
 	purchased_upgrades = {}
-	
-	print("[GameManager] reset_game: click_multiplier reset to ", click_multiplier)
 	
 	auto_click_timer.stop()
 	

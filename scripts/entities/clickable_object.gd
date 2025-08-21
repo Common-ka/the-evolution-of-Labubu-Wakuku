@@ -26,14 +26,10 @@ func _ready() -> void:
 	mouse_exited.connect(_on_mouse_exited)
 
 # Обработка клика
-func _on_input_event(viewport: Viewport, event: InputEvent, shape_idx: int) -> void:
-	print("ClickableObject: Получено событие ввода - ", event.get_class())
-	
+func _on_input_event(_viewport: Viewport, event: InputEvent, _shape_idx: int) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		print("ClickableObject: Обработка клика мыши")
 		perform_click()
 	elif event is InputEventScreenTouch and event.pressed:
-		print("ClickableObject: Обработка тач-нажатия")
 		perform_click()
 
 # Обработка входа мыши
@@ -75,13 +71,11 @@ func create_click_effect() -> void:
 
 # Создание эффекта частиц
 func create_particle_effect() -> void:
-	print("[ClickableObject] Создание эффекта частиц в позиции: ", global_position)
 	# Создаем эффект частиц через ParticleManager
 	ParticleManager.create_click_effect(global_position)
 	
 	# Эмитируем сигнал для других систем
 	EventBus.emit_signal("particle_effect_requested", "click_stars", global_position)
-	print("[ClickableObject] Эффект частиц создан")
 
 # Создание улучшенной анимации масштабирования и ротации
 func create_scale_animation() -> void:

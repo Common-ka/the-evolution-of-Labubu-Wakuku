@@ -5,88 +5,47 @@ extends Node
 
 var available_effects: Array = []
 var active_effects: Array = []
-var effect_scenes: Dictionary = {}
+var effect_scene: PackedScene
 
 # Настройки пула
-const INITIAL_POOL_SIZE := 15
-const MAX_POOL_SIZE := 40
-
-# Конфигурация эффектов
-const EFFECT_CONFIGS := {
-	"click_stars": {
-		"particle_count": 4,
-		"lifetime": 0.8,
-		"velocity_min": 60,
-		"velocity_max": 120,
-		"scale_min": 0.4,
-		"scale_max": 0.7,
-		"colors": ["#FFD700", "#FFA500", "#FFFF00", "#FF6B35"]
-	}
-}
+const INITIAL_POOL_SIZE := 10
+const MAX_POOL_SIZE := 25
 
 func _ready() -> void:
-	# Предзагружаем сцены эффектов
-	effect_scenes["click_stars"] = preload("res://scenes/entities/particle_effects.tscn")
+	# Предзагружаем сцену эффектов
+	effect_scene = preload("res://scenes/entities/particle_effects.tscn")
 	
-	# Проверяем, что сцена загружена
-	if not effect_scenes["click_stars"]:
-		print("[ParticleManager] ОШИБКА: Не удалось загрузить сцену particle_effects.tscn")
+	if not effect_scene:
+		push_error("ParticleManager: Не удалось загрузить particle_effects.tscn")
 		return
 	
-	print("[ParticleManager] Сцена particle_effects.tscn загружена успешно")
-	
 	_prepopulate_pool()
-	print("[ParticleManager] Пул инициализирован с ", INITIAL_POOL_SIZE, " объектами")
-	print("[ParticleManager] Статистика пула: ", get_pool_stats())
 
 # Создание эффекта клика
 func create_click_effect(position: Vector2) -> void:
 	var effect = _get_effect_from_pool()
 	if not effect:
-		print("[ParticleManager] Не удалось получить эффект из пула")
 		return
 	
-	print("[ParticleManager] Получен эффект из пула: ", effect.name, " класса: ", effect.get_class())
-	
-	# Проверяем, что эффект имеет нужные методы
-	if not effect.has_method("setup_effect"):
-		print("[ParticleManager] ОШИБКА: Эффект не имеет метода setup_effect")
-		return
-	
-	# КРИТИЧНО: Добавляем эффект в текущую сцену ПЕРЕД настройкой!
+	# Добавляем эффект в текущую сцену
 	var current_scene = get_tree().current_scene
-	if current_scene:
-		# Добавляем в UI слой для правильного отображения
-		var ui_node = current_scene.get_node_or_null("UI")
-		if ui_node:
-			ui_node.add_child(effect)
-			print("[ParticleManager] Эффект добавлен в UI сцены")
-			print("[ParticleManager] UI тип: ", ui_node.get_class())
-		else:
-			# Fallback: добавляем в корень сцены
-			current_scene.add_child(effect)
-			print("[ParticleManager] Эффект добавлен в корень сцены")
-			print("[ParticleManager] Корень тип: ", current_scene.get_class())
-		
-		# Проверяем видимость эффекта
-		print("[ParticleManager] Эффект видимый: ", effect.visible)
-		print("[ParticleManager] Эффект в дереве: ", effect.is_inside_tree())
-		
-		# ЖДЕМ один кадр для завершения _ready()
-		await get_tree().process_frame
-		
-		# Теперь настраиваем эффект
-		effect.global_position = position
-		effect.setup_effect("click_stars")
-	else:
-		print("[ParticleManager] ОШИБКА: Не удалось найти текущую сцену")
+	if not current_scene:
 		return
+	
+	# Пытаемся добавить в UI слой, иначе в корень сцены
+	var ui_node = current_scene.get_node_or_null("UI")
+	var parent_node = ui_node if ui_node else current_scene
+	parent_node.add_child(effect)
+	
+	# Ожидаем один кадр для завершения _ready()
+	await get_tree().process_frame
+	
+	# Настраиваем эффект
+	effect.global_position = position
+	effect.setup_effect()
 	
 	# Добавляем в активные
 	active_effects.append(effect)
-	
-	print("[ParticleManager] Создан эффект клика в позиции: ", position)
-	print("[ParticleManager] Статистика пула: ", get_pool_stats())
 
 # Получить эффект из пула
 func _get_effect_from_pool() -> Node2D:
@@ -94,13 +53,11 @@ func _get_effect_from_pool() -> Node2D:
 	
 	if available_effects.is_empty():
 		# Создаем новый объект если пул пуст
-		effect = effect_scenes["click_stars"].instantiate()
+		effect = effect_scene.instantiate()
 		effect.effect_finished.connect(_on_effect_finished)
-		print("[ParticleManager] Создан новый эффект")
 	else:
 		# Берем объект из пула
 		effect = available_effects.pop_back()
-		print("[ParticleManager] Взят эффект из пула. Осталось: ", available_effects.size())
 	
 	return effect
 
@@ -120,15 +77,13 @@ func return_effect_to_pool(effect: Node2D) -> void:
 	# Возвращаем в пул или удаляем
 	if available_effects.size() < MAX_POOL_SIZE:
 		available_effects.append(effect)
-		print("[ParticleManager] Эффект возвращен в пул. Размер пула: ", available_effects.size())
 	else:
 		effect.queue_free()
-		print("[ParticleManager] Эффект удален (пул переполнен)")
 
 # Предварительное заполнение пула
 func _prepopulate_pool() -> void:
 	for i in INITIAL_POOL_SIZE:
-		var effect = effect_scenes["click_stars"].instantiate()
+		var effect = effect_scene.instantiate()
 		effect.effect_finished.connect(_on_effect_finished)
 		available_effects.append(effect)
 
@@ -149,4 +104,3 @@ func clear_all_effects() -> void:
 		effect.queue_free()
 	
 	active_effects.clear()
-	print("[ParticleManager] Все активные эффекты очищены")
