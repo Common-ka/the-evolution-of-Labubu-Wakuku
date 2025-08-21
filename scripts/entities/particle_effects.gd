@@ -58,33 +58,12 @@ func setup_effect(effect_type: String) -> void:
 func _setup_click_stars() -> void:
 	print("[ParticleEffects] Настройка эффекта звездочек")
 	
-	# Настройка частиц
-	particles.amount = 4
-	particles.lifetime = 0.8
-	particles.explosiveness = 0.8
-	particles.randomness = 0.3
+	# Упрощенная настройка - используем настройки из сцены
+	# Только критичные параметры, которые могут меняться динамически
 	particles.emission_shape = CPUParticles2D.EMISSION_SHAPE_SPHERE
+	particles.emission_sphere_radius = 1.0
 	
-	# Направление и разброс
-	particles.direction = Vector2(0, -1)
-	particles.spread = 180.0
-	
-	# Скорость
-	particles.initial_velocity_min = 60.0
-	particles.initial_velocity_max = 120.0
-	
-	# Размер
-	particles.scale_amount_min = 0.4
-	particles.scale_amount_max = 0.7
-	
-	# Вращение
-	particles.angular_velocity_min = -180.0
-	particles.angular_velocity_max = 180.0
-	
-	# Гравитация (легкое падение)
-	particles.gravity = Vector2(0, 98)
-	
-	# Базовый цвет - белый (будет виден без текстуры)
+	# Убеждаемся, что цвет установлен
 	particles.color = Color.WHITE
 	
 	print("[ParticleEffects] Эффект звездочек настроен успешно")

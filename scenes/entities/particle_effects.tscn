@@ -17,6 +17,7 @@ explosiveness = 0.8
 randomness = 0.3
 lifetime_randomness = 0.2
 emission_shape = 1
+emission_sphere_radius = 1.0
 direction = Vector2(0, -1)
 spread = 180.0
 gravity = Vector2(0, 98)
@@ -27,7 +28,7 @@ angular_velocity_max = 180.0
 scale_amount_min = 0.4
 scale_amount_max = 0.7
 color = Color(1, 1, 1, 1)
-color_ramp = SubResource("Gradient_1")
+texture = null
 
 [node name="DebugLabel" type="Label" parent="."]
 visible = false

@@ -27,8 +27,17 @@ const EFFECT_CONFIGS := {
 func _ready() -> void:
 	# Предзагружаем сцены эффектов
 	effect_scenes["click_stars"] = preload("res://scenes/entities/particle_effects.tscn")
+	
+	# Проверяем, что сцена загружена
+	if not effect_scenes["click_stars"]:
+		print("[ParticleManager] ОШИБКА: Не удалось загрузить сцену particle_effects.tscn")
+		return
+	
+	print("[ParticleManager] Сцена particle_effects.tscn загружена успешно")
+	
 	_prepopulate_pool()
 	print("[ParticleManager] Пул инициализирован с ", INITIAL_POOL_SIZE, " объектами")
+	print("[ParticleManager] Статистика пула: ", get_pool_stats())
 
 # Создание эффекта клика
 func create_click_effect(position: Vector2) -> void:
@@ -68,6 +77,7 @@ func create_click_effect(position: Vector2) -> void:
 	active_effects.append(effect)
 	
 	print("[ParticleManager] Создан эффект клика в позиции: ", position)
+	print("[ParticleManager] Статистика пула: ", get_pool_stats())
 
 # Получить эффект из пула
 func _get_effect_from_pool() -> Node2D:

@@ -75,11 +75,13 @@ func create_click_effect() -> void:
 
 # Создание эффекта частиц
 func create_particle_effect() -> void:
+	print("[ClickableObject] Создание эффекта частиц в позиции: ", global_position)
 	# Создаем эффект частиц через ParticleManager
 	ParticleManager.create_click_effect(global_position)
 	
 	# Эмитируем сигнал для других систем
 	EventBus.emit_signal("particle_effect_requested", "click_stars", global_position)
+	print("[ClickableObject] Эффект частиц создан")
 
 # Создание улучшенной анимации масштабирования и ротации
 func create_scale_animation() -> void:
