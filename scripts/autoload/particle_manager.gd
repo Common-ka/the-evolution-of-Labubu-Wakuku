@@ -1,7 +1,7 @@
 extends Node
 
 # Автозагружаемый скрипт для управления эффектами частиц
-# Использует object pooling для оптимизации производительности
+# Использует пул объектов (object pooling) для оптимизации производительности
 
 var available_effects: Array = []
 var active_effects: Array = []

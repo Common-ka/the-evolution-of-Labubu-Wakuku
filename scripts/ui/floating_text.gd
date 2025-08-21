@@ -56,10 +56,10 @@ func _start_animation() -> void:
 	# Движение вверх
 	tween.tween_property(self, "position:y", position.y - FLOAT_DISTANCE, ANIMATION_DURATION).set_ease(Tween.EASE_OUT)
 	
-	# Fade out (начинается через FADE_START_TIME)
+	# Затухание (начинается через FADE_START_TIME)
 	tween.tween_property(label, "modulate:a", 0.0, ANIMATION_DURATION - FADE_START_TIME).set_delay(FADE_START_TIME).set_ease(Tween.EASE_IN)
 	
-	# Scale animation: увеличение, затем уменьшение
+	# Анимация масштаба: увеличение, затем уменьшение
 	tween.tween_property(self, "scale", Vector2(1.3, 1.3), SCALE_UP_TIME).set_ease(Tween.EASE_OUT)
 	tween.tween_property(self, "scale", Vector2(1.0, 1.0), SCALE_DOWN_TIME).set_delay(SCALE_UP_TIME).set_ease(Tween.EASE_IN_OUT)
 	

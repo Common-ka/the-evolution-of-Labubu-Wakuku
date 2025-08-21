@@ -1,7 +1,7 @@
 extends Node
 
 # Автозагружаемый скрипт для управления пулом Floating Text объектов
-# Использует object pooling для оптимизации производительности
+# Использует пул объектов (object pooling) для оптимизации производительности
 
 var available_texts: Array = []
 var active_texts: Array = []

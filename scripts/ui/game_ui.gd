@@ -68,21 +68,21 @@ func _on_currency_changed(new_amount: int) -> void:
 	_animate_currency_change(new_amount)
 
 func _animate_currency_change(target_amount: int) -> void:
-	"""Interpolates numeric label, pulses scale and flashes color on change."""
-	# Value interpolation
+	"""Интерполирует числовой лейбл, пульсирует масштаб и вспыхивает цвет при изменении."""
+	# Интерполяция значения
 	if _value_tween:
 		_value_tween.kill()
 	_value_tween = create_tween()
 	_value_tween.tween_method(_update_display_currency, float(_display_currency), float(target_amount), VALUE_ANIM_DURATION)
 
-	# Scale pulse
+	# Пульс масштаба
 	if _pulse_tween:
 		_pulse_tween.kill()
 	_pulse_tween = create_tween()
 	_pulse_tween.tween_property(currency_display, "scale", Vector2(PULSE_SCALE, PULSE_SCALE), PULSE_DURATION).set_ease(Tween.EASE_OUT)
 	_pulse_tween.tween_property(currency_display, "scale", Vector2.ONE, PULSE_DURATION).set_ease(Tween.EASE_IN)
 
-	# Color flash
+	# Цветовая вспышка
 	if _color_tween:
 		_color_tween.kill()
 	_color_tween = create_tween()
