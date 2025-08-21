@@ -65,10 +65,18 @@ func create_click_effect(position: Vector2) -> void:
 		if ui_node:
 			ui_node.add_child(effect)
 			print("[ParticleManager] Эффект добавлен в UI сцены")
+			print("[ParticleManager] UI позиция: ", ui_node.global_position)
+			print("[ParticleManager] Эффект позиция: ", effect.global_position)
 		else:
 			# Fallback: добавляем в корень сцены
 			current_scene.add_child(effect)
 			print("[ParticleManager] Эффект добавлен в корень сцены")
+			print("[ParticleManager] Корень позиция: ", current_scene.global_position)
+			print("[ParticleManager] Эффект позиция: ", effect.global_position)
+		
+		# Проверяем видимость эффекта
+		print("[ParticleManager] Эффект видимый: ", effect.visible)
+		print("[ParticleManager] Эффект в дереве: ", effect.is_inside_tree())
 	else:
 		print("[ParticleManager] ОШИБКА: Не удалось найти текущую сцену")
 		return

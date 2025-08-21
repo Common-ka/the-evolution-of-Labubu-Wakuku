@@ -48,23 +48,29 @@ func setup_effect(effect_type: String) -> void:
 	
 	# Запускаем эффект
 	particles.emitting = true
+	print("[ParticleEffects] particles.emitting установлен в: ", particles.emitting)
 	
-	# Запускаем таймер как fallback
-	effect_timer.start(1.2) # Немного больше lifetime частиц
+	# Принудительный restart для гарантии
+	particles.restart()
+	print("[ParticleEffects] particles.restart() вызван")
 	
-	print("[ParticleEffects] Эффект ", effect_type, " запущен")
+	# Запускаем таймер как fallback (используем время жизни частиц + запас)
+	var timer_duration = particles.lifetime + 0.5
+	effect_timer.start(timer_duration)
+	
+	print("[ParticleEffects] Эффект ", effect_type, " запущен, таймер на ", timer_duration, " сек")
 
 # Настройка эффекта звездочек для клика
 func _setup_click_stars() -> void:
 	print("[ParticleEffects] Настройка эффекта звездочек")
 	
-	# Упрощенная настройка - используем настройки из сцены
-	# Только критичные параметры, которые могут меняться динамически
-	particles.emission_shape = CPUParticles2D.EMISSION_SHAPE_SPHERE
-	particles.emission_sphere_radius = 1.0
-	
-	# Убеждаемся, что цвет установлен
-	particles.color = Color.WHITE
+	# НЕ переопределяем настройки - используем из сцены!
+	# Просто проверяем текущие настройки
+	print("[ParticleEffects] Количество частиц: ", particles.amount)
+	print("[ParticleEffects] Время жизни: ", particles.lifetime)
+	print("[ParticleEffects] Цвет: ", particles.color)
+	print("[ParticleEffects] Размер: ", particles.scale_amount_min, " - ", particles.scale_amount_max)
+	print("[ParticleEffects] Эмиссия: ", particles.emitting)
 	
 	print("[ParticleEffects] Эффект звездочек настроен успешно")
 
