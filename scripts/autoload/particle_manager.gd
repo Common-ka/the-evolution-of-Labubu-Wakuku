@@ -53,11 +53,7 @@ func create_click_effect(position: Vector2) -> void:
 		print("[ParticleManager] ОШИБКА: Эффект не имеет метода setup_effect")
 		return
 	
-	# Настраиваем эффект
-	effect.global_position = position
-	effect.setup_effect("click_stars")
-	
-	# КРИТИЧНО: Добавляем эффект в текущую сцену!
+	# КРИТИЧНО: Добавляем эффект в текущую сцену ПЕРЕД настройкой!
 	var current_scene = get_tree().current_scene
 	if current_scene:
 		# Добавляем в UI слой для правильного отображения
@@ -66,17 +62,22 @@ func create_click_effect(position: Vector2) -> void:
 			ui_node.add_child(effect)
 			print("[ParticleManager] Эффект добавлен в UI сцены")
 			print("[ParticleManager] UI тип: ", ui_node.get_class())
-			print("[ParticleManager] Эффект позиция: ", effect.global_position)
 		else:
 			# Fallback: добавляем в корень сцены
 			current_scene.add_child(effect)
 			print("[ParticleManager] Эффект добавлен в корень сцены")
 			print("[ParticleManager] Корень тип: ", current_scene.get_class())
-			print("[ParticleManager] Эффект позиция: ", effect.global_position)
 		
 		# Проверяем видимость эффекта
 		print("[ParticleManager] Эффект видимый: ", effect.visible)
 		print("[ParticleManager] Эффект в дереве: ", effect.is_inside_tree())
+		
+		# ЖДЕМ один кадр для завершения _ready()
+		await get_tree().process_frame
+		
+		# Теперь настраиваем эффект
+		effect.global_position = position
+		effect.setup_effect("click_stars")
 	else:
 		print("[ParticleManager] ОШИБКА: Не удалось найти текущую сцену")
 		return
