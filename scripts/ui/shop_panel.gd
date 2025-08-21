@@ -9,8 +9,8 @@ var upgrades: Dictionary = {}
 @onready var overlay: ColorRect = $Overlay
 @onready var panel: Panel = $Panel
 
-var _show_tween: SceneTreeTween
-var _hide_tween: SceneTreeTween
+var _show_tween: Tween
+var _hide_tween: Tween
 const SHOW_DURATION := 0.22
 const HIDE_DURATION := 0.18
 const SCALE_MIN := 0.95
