@@ -97,7 +97,7 @@ func _update_display_currency(value: float) -> void:
 	_display_currency = v
 	update_currency_display()
 
-func _on_level_up(new_level: int) -> void:
+func _on_level_up(_new_level: int) -> void:
 	update_level_display()
 
 # Отладочная обработка всех событий ввода
