@@ -12,10 +12,24 @@ signal effect_finished(effect: Node2D)
 var effect_timer: Timer
 
 func _ready() -> void:
+	print("[ParticleEffects] _ready: начало выполнения")
+	
 	# Проверяем, что узлы найдены
 	if not particles:
 		print("[ParticleEffects] ОШИБКА: CPUParticles2D узел не найден!")
-		return
+		print("[ParticleEffects] Дочерние узлы: ", get_children())
+		print("[ParticleEffects] Поиск CPUParticles2D...")
+		
+		# Попробуем найти вручную
+		var found_particles = get_node_or_null("CPUParticles2D")
+		if found_particles:
+			print("[ParticleEffects] CPUParticles2D найден вручную: ", found_particles)
+			particles = found_particles
+		else:
+			print("[ParticleEffects] CPUParticles2D НЕ найден даже вручную!")
+			return
+	else:
+		print("[ParticleEffects] CPUParticles2D найден через @onready: ", particles)
 	
 	if not debug_label:
 		print("[ParticleEffects] ОШИБКА: DebugLabel узел не найден!")
@@ -31,6 +45,8 @@ func _ready() -> void:
 	particles.finished.connect(_on_particles_finished)
 	
 	print("[ParticleEffects] _ready: узлы инициализированы успешно")
+	print("[ParticleEffects] particles.amount: ", particles.amount)
+	print("[ParticleEffects] particles.color: ", particles.color)
 
 # Настройка эффекта
 func setup_effect(effect_type: String) -> void:
