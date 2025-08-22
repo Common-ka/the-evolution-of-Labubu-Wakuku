@@ -157,7 +157,7 @@ func _render_items() -> void:
 			var name_label := Label.new()
 			name_label.text = category_data.get("name", category_id)
 			name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			name_label.modulate = Color(1.0, 1.0, 0.8, 1.0)  # Желтоватый цвет для заголовков
+			name_label.modulate = Color(1.0, 0.8, 0.0, 1.0)  # Яркий желтый цвет для заголовков
 			category_header.add_child(name_label)
 			
 			list_container.add_child(category_header)
