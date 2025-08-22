@@ -37,10 +37,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -180.0
-offset_top = -240.0
-offset_right = 180.0
-offset_bottom = 240.0
+offset_left = -200.0
+offset_top = -280.0
+offset_right = 200.0
+offset_bottom = 280.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_1")
@@ -67,7 +67,21 @@ layout_mode = 2
 text = "Магазин"
 horizontal_alignment = 1
 
-[node name="Items" type="VBoxContainer" parent="Panel/Margin/VBox"]
+[node name="TabContainer" type="TabContainer" parent="Panel/Margin/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Магазин" type="VBoxContainer" parent="Panel/Margin/VBox/TabContainer"]
+layout_mode = 2
+
+[node name="Items" type="VBoxContainer" parent="Panel/Margin/VBox/TabContainer/Магазин"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Апгрейды" type="VBoxContainer" parent="Panel/Margin/VBox/TabContainer"]
+layout_mode = 2
+
+[node name="UpgradeStats" type="VBoxContainer" parent="Panel/Margin/VBox/TabContainer/Апгрейды"]
 layout_mode = 2
 size_flags_vertical = 3
 

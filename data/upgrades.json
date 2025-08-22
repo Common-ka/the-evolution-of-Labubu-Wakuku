@@ -1,22 +1,70 @@
 {
+  "categories": {
+    "click_upgrades": {
+      "name": "Улучшения кликов",
+      "description": "Увеличивают валюту за клик",
+      "color": "#4CAF50",
+      "icon": "👆"
+    },
+    "auto_click_upgrades": {
+      "name": "Авто-клики",
+      "description": "Пассивный доход валюты",
+      "color": "#2196F3",
+      "icon": "⚡"
+    },
+    "multiplier_upgrades": {
+      "name": "Множители",
+      "description": "Увеличивают все доходы",
+      "color": "#FF9800",
+      "icon": "✨"
+    }
+  },
   "upg_click_1": {
-	"name": "Сильнее палец I",
-	"stat": "click_multiplier",
-	"stack": "mul",
-	"value": 0.2,
-	"base_cost": 10,
-	"growth": 2.5,
-	"max_level": 10,
-	"currency": "soft"
+    "name": "Сильнее палец I",
+    "category": "click_upgrades",
+    "stat": "click_multiplier",
+    "stack": "mul",
+    "value": 0.2,
+    "base_cost": 10,
+    "growth": 2.5,
+    "max_level": 10,
+    "currency": "soft",
+    "description": "Увеличивает валюту за клик на 20%"
   },
   "upg_click_2": {
-	"name": "Сильнее палец II",
-	"stat": "click_multiplier",
-	"stack": "mul",
-	"value": 0.5,
-	"base_cost": 50,
-	"growth": 2.5,
-	"max_level": 10,
-	"currency": "soft"
+    "name": "Сильнее палец II",
+    "category": "click_upgrades",
+    "stat": "click_multiplier",
+    "stack": "mul",
+    "value": 0.5,
+    "base_cost": 50,
+    "growth": 2.5,
+    "max_level": 10,
+    "currency": "soft",
+    "description": "Увеличивает валюту за клик на 50%"
+  },
+  "upg_auto_1": {
+    "name": "Авто-клик I",
+    "category": "auto_click_upgrades",
+    "stat": "auto_click_rate",
+    "stack": "add",
+    "value": 1,
+    "base_cost": 25,
+    "growth": 2.0,
+    "max_level": 5,
+    "currency": "soft",
+    "description": "Добавляет 1 авто-клик в секунду"
+  },
+  "upg_mult_1": {
+    "name": "Удачливый игрок",
+    "category": "multiplier_upgrades",
+    "stat": "global_multiplier",
+    "stack": "mul",
+    "value": 0.1,
+    "base_cost": 100,
+    "growth": 3.0,
+    "max_level": 3,
+    "currency": "soft",
+    "description": "Увеличивает все доходы на 10%"
   }
 }

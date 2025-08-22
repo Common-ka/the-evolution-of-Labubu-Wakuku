@@ -11,6 +11,7 @@ var experience_to_next_level: int = 100
 # Множители и бонусы
 var click_multiplier: float = 1.0
 var auto_click_rate: float = 0.0
+var global_multiplier: float = 1.0
 var auto_click_timer: Timer
 
 # Статистика
@@ -55,7 +56,9 @@ func perform_click() -> void:
 
 # Получение значения клика
 func get_click_value() -> int:
-	return int(ceil(5.0 * click_multiplier))
+	var base_value = 5.0 * click_multiplier
+	var final_value = base_value * global_multiplier
+	return int(ceil(final_value))
 
 # Добавление валюты
 func add_currency(amount: int) -> void:
@@ -98,11 +101,19 @@ func apply_upgrade_effect(stat: String, effect_value: float) -> void:
 		"click_multiplier":
 			var before := click_multiplier
 			click_multiplier += effect_value
+			print("[GameManager] click_multiplier: %f -> %f (+%f)" % [before, click_multiplier, effect_value])
 
 		"auto_click_rate":
+			var before := auto_click_rate
 			auto_click_rate += effect_value
+			print("[GameManager] auto_click_rate: %f -> %f (+%f)" % [before, auto_click_rate, effect_value])
 			if auto_click_rate > 0 and not auto_click_timer.is_stopped():
 				auto_click_timer.start()
+
+		"global_multiplier":
+			var before := global_multiplier
+			global_multiplier += effect_value
+			print("[GameManager] global_multiplier: %f -> %f (+%f)" % [before, global_multiplier, effect_value])
 	
 	EventBus.emit_signal("upgrade_effect_applied", stat, effect_value)
 
@@ -115,6 +126,7 @@ func get_save_data() -> Dictionary:
 		"experience_to_next_level": experience_to_next_level,
 		"click_multiplier": click_multiplier,
 		"auto_click_rate": auto_click_rate,
+		"global_multiplier": global_multiplier,
 		"total_clicks": total_clicks,
 		"total_currency_earned": total_currency_earned,
 		"game_start_time": game_start_time,
@@ -129,24 +141,39 @@ func load_save_data(data: Dictionary) -> void:
 	experience_to_next_level = data.get("experience_to_next_level", 100)
 	click_multiplier = data.get("click_multiplier", 1.0)
 	auto_click_rate = data.get("auto_click_rate", 0.0)
+	global_multiplier = data.get("global_multiplier", 1.0)
 	total_clicks = data.get("total_clicks", 0)
 	total_currency_earned = data.get("total_currency_earned", 0)
 	game_start_time = data.get("game_start_time", 0)
 	
 	# Апгрейды
 	purchased_upgrades = data.get("purchased_upgrades", {})
+	
 	# Применяем эффекты апгрейдов повторно для консистентности
 	# Сбрасываем базовые множители перед применением
-	click_multiplier = 1.0  # Сбрасываем к базовому значению
+	click_multiplier = 1.0
+	auto_click_rate = 0.0
+	global_multiplier = 1.0
+	
+	# Применяем все купленные апгрейды
 	for upg_id in purchased_upgrades.keys():
 		var level: int = int(purchased_upgrades[upg_id])
-		# Применяем эффект level раз для каждого апгрейда
-		if upg_id == "upg_click_1":
+		if level <= 0:
+			continue
+			
+		# Получаем данные апгрейда из JSON
+		var upgrade_data = _get_upgrade_data(upg_id)
+		if upgrade_data.is_empty():
+			continue
+			
+		var stat = upgrade_data.get("stat", "")
+		var value = float(upgrade_data.get("value", 0.0))
+		var stack = upgrade_data.get("stack", "add")
+		
+		if stat != "" and value > 0:
+			# Применяем эффект level раз
 			for i in level:
-				apply_upgrade_effect("click_multiplier", 0.2)
-		elif upg_id == "upg_click_2":
-			for i in level:
-				apply_upgrade_effect("click_multiplier", 0.5)
+				apply_upgrade_effect(stat, value)
 	
 	# Обновление авто-кликов
 	if auto_click_rate > 0:
@@ -174,6 +201,7 @@ func reset_game() -> void:
 	experience_to_next_level = 100
 	click_multiplier = 1.0
 	auto_click_rate = 0.0
+	global_multiplier = 1.0
 	total_clicks = 0
 	total_currency_earned = 0
 	game_start_time = Time.get_unix_time_from_system()
@@ -233,3 +261,22 @@ func _on_particle_effect_requested(effect_type: String, position: Vector2) -> vo
 func _on_auto_click_timer_timeout() -> void:
 	if auto_click_rate > 0:
 		add_currency(int(auto_click_rate))
+
+# Получить данные апгрейда из JSON файла
+func _get_upgrade_data(upgrade_id: String) -> Dictionary:
+	var path := "res://data/upgrades.json"
+	if not FileAccess.file_exists(path):
+		return {}
+		
+	var f := FileAccess.open(path, FileAccess.READ)
+	if not f:
+		return {}
+		
+	var txt := f.get_as_text()
+	f.close()
+	var json := JSON.new()
+	if json.parse(txt) == OK:
+		var data = json.data
+		return data.get(upgrade_id, {})
+	
+	return {}
