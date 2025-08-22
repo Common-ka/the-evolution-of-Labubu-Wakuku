@@ -15,6 +15,13 @@ const SHOW_DURATION := 0.22
 const HIDE_DURATION := 0.18
 const SCALE_MIN := 0.95
 
+# Константы для анимации кнопок
+const BUTTON_HOVER_SCALE := 1.05
+const BUTTON_PRESS_SCALE := 0.95
+const BUTTON_ANIM_DURATION := 0.15
+const BUTTON_DISABLED_ALPHA := 0.6
+const BUTTON_ENABLED_ALPHA := 1.0
+
 func _ready() -> void:
 	close_button.pressed.connect(_on_close_pressed)
 	
@@ -97,6 +104,10 @@ func _render_items() -> void:
 		buy.text = "Купить"
 		buy.disabled = GameManager.current_currency < cost or GameManager.get_upgrade_level(upg_id) >= int(data.get("max_level", 1))
 		buy.pressed.connect(func(): _on_buy_pressed(upg_id))
+		
+		# Настройка анимаций для кнопки покупки
+		_setup_button_animations(buy)
+		
 		h.add_child(buy)
 		list_container.add_child(h)
 
@@ -124,3 +135,46 @@ func _on_buy_pressed(upg_id: String) -> void:
 		print("[ShopPanel] after apply: click_multiplier=", GameManager.click_multiplier, ", level=", GameManager.get_upgrade_level(upg_id))
 	EventBus.emit_signal("upgrade_purchased", upg_id)
 	_render_items()
+
+# Настройка анимаций для кнопки
+func _setup_button_animations(button: Button) -> void:
+	# Подключаем сигналы для анимаций
+	button.mouse_entered.connect(func(): _on_button_mouse_entered(button))
+	button.mouse_exited.connect(func(): _on_button_mouse_exited(button))
+	button.button_down.connect(func(): _on_button_pressed_visual(button))
+	button.button_up.connect(func(): _on_button_released_visual(button))
+	
+	# Устанавливаем начальное состояние
+	button.modulate.a = BUTTON_ENABLED_ALPHA if not button.disabled else BUTTON_DISABLED_ALPHA
+
+# Эффект при наведении мыши на кнопку
+func _on_button_mouse_entered(button: Button) -> void:
+	if button.disabled:
+		return
+	
+	var tween = create_tween()
+	tween.tween_property(button, "scale", Vector2(BUTTON_HOVER_SCALE, BUTTON_HOVER_SCALE), BUTTON_ANIM_DURATION).set_ease(Tween.EASE_OUT)
+
+# Убираем эффект при уходе мыши с кнопки
+func _on_button_mouse_exited(button: Button) -> void:
+	if button.disabled:
+		return
+	
+	var tween = create_tween()
+	tween.tween_property(button, "scale", Vector2.ONE, BUTTON_ANIM_DURATION).set_ease(Tween.EASE_OUT)
+
+# Визуальный эффект при нажатии кнопки
+func _on_button_pressed_visual(button: Button) -> void:
+	if button.disabled:
+		return
+	
+	var tween = create_tween()
+	tween.tween_property(button, "scale", Vector2(BUTTON_PRESS_SCALE, BUTTON_PRESS_SCALE), BUTTON_ANIM_DURATION * 0.5).set_ease(Tween.EASE_OUT)
+
+# Визуальный эффект при отпускании кнопки
+func _on_button_released_visual(button: Button) -> void:
+	if button.disabled:
+		return
+	
+	var tween = create_tween()
+	tween.tween_property(button, "scale", Vector2(BUTTON_HOVER_SCALE, BUTTON_HOVER_SCALE), BUTTON_ANIM_DURATION * 0.5).set_ease(Tween.EASE_OUT)
