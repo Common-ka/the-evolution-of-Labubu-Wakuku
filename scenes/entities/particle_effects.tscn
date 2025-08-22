@@ -6,8 +6,9 @@
 script = ExtResource("1_script")
 
 [node name="CPUParticles2D" type="CPUParticles2D" parent="."]
+amount = 5
 emitting = false
-lifetime = 2.0
+lifetime = 1.5
 one_shot = true
 explosiveness = 1.0
 randomness = 0.1

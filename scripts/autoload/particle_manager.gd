@@ -7,9 +7,10 @@ var available_effects: Array = []
 var active_effects: Array = []
 var effect_scene: PackedScene
 
-# Настройки пула
-const INITIAL_POOL_SIZE := 10
-const MAX_POOL_SIZE := 25
+# Настройки пула (оптимизированы для производительности)
+const INITIAL_POOL_SIZE := 6
+const MAX_POOL_SIZE := 12
+const MAX_ACTIVE_EFFECTS := 8  # Ограничение одновременных эффектов
 
 func _ready() -> void:
 	# Предзагружаем сцену эффектов
@@ -21,8 +22,14 @@ func _ready() -> void:
 	
 	_prepopulate_pool()
 
-# Создание эффекта клика
+# Создание эффекта клика (с ограничением производительности)
 func create_click_effect(position: Vector2) -> void:
+	# Проверяем лимит активных эффектов
+	if active_effects.size() >= MAX_ACTIVE_EFFECTS:
+		# Если лимит достигнут, заменяем самый старый эффект
+		_replace_oldest_effect(position)
+		return
+	
 	var effect = _get_effect_from_pool()
 	if not effect:
 		return
@@ -46,6 +53,23 @@ func create_click_effect(position: Vector2) -> void:
 	
 	# Добавляем в активные
 	active_effects.append(effect)
+
+# Замена самого старого эффекта для поддержания производительности
+func _replace_oldest_effect(new_position: Vector2) -> void:
+	if active_effects.is_empty():
+		return
+	
+	# Находим самый старый эффект (первый в массиве)
+	var oldest_effect = active_effects[0]
+	
+	# Убираем его из активных
+	active_effects.remove_at(0)
+	
+	# Возвращаем в пул
+	return_effect_to_pool(oldest_effect)
+	
+	# Создаем новый эффект на том же месте
+	create_click_effect(new_position)
 
 # Получить эффект из пула
 func _get_effect_from_pool() -> Node2D:
@@ -93,7 +117,9 @@ func get_pool_stats() -> Dictionary:
 		"available": available_effects.size(),
 		"active": active_effects.size(),
 		"total": available_effects.size() + active_effects.size(),
-		"max_size": MAX_POOL_SIZE
+		"max_pool_size": MAX_POOL_SIZE,
+		"max_active_effects": MAX_ACTIVE_EFFECTS,
+		"performance_status": "optimal" if active_effects.size() < MAX_ACTIVE_EFFECTS else "at_limit"
 	}
 
 # Очистка всех активных эффектов (для перезагрузки сцены)
@@ -104,3 +130,15 @@ func clear_all_effects() -> void:
 		effect.queue_free()
 	
 	active_effects.clear()
+
+# Принудительная очистка для освобождения памяти
+func force_cleanup() -> void:
+	clear_all_effects()
+	
+	# Очищаем пул
+	for effect in available_effects:
+		effect.queue_free()
+	available_effects.clear()
+	
+	# Пересоздаем базовый пул
+	_prepopulate_pool()
