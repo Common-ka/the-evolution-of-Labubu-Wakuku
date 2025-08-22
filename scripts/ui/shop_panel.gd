@@ -7,8 +7,8 @@ var upgrades: Dictionary = {}
 var categories: Dictionary = {}
 var current_category: String = ""
 
-@onready var list_container: VBoxContainer = $Panel/Margin/VBox/TabContainer/Магазин/Items
-@onready var upgrade_stats_container: VBoxContainer = $Panel/Margin/VBox/TabContainer/Апгрейды/UpgradeStats
+@onready var list_container: VBoxContainer = $Panel/Margin/VBox/TabContainer/Магазин/Items/VBoxContainer
+@onready var upgrade_stats_container: VBoxContainer = $Panel/Margin/VBox/TabContainer/Апгрейды/UpgradeStats/VBoxContainer
 @onready var close_button: Button = $Panel/Margin/VBox/CloseButton
 @onready var overlay: ColorRect = $Overlay
 @onready var panel: Panel = $Panel
@@ -145,23 +145,26 @@ func _render_items() -> void:
 			
 			# Заголовок категории
 			var category_header := HBoxContainer.new()
-			category_header.custom_minimum_size = Vector2(0, 32)
+			category_header.custom_minimum_size = Vector2(0, 28)
 			category_header.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 			
 			var icon_label := Label.new()
 			icon_label.text = category_data.get("icon", "📦")
 			icon_label.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+			icon_label.custom_minimum_size = Vector2(30, 0)
 			category_header.add_child(icon_label)
 			
 			var name_label := Label.new()
 			name_label.text = category_data.get("name", category_id)
 			name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			name_label.modulate = Color(1.0, 1.0, 0.8, 1.0)  # Желтоватый цвет для заголовков
 			category_header.add_child(name_label)
 			
 			list_container.add_child(category_header)
 			
 			# Разделитель
 			var separator := HSeparator.new()
+			separator.modulate = Color(0.6, 0.6, 0.6, 1.0)
 			list_container.add_child(separator)
 			
 			# Апгрейды категории
@@ -170,14 +173,14 @@ func _render_items() -> void:
 
 func _render_upgrade_item(upg_id: String, data: Dictionary, category_data: Dictionary) -> void:
 	var h := HBoxContainer.new()
-	h.custom_minimum_size = Vector2(0, 40)
+	h.custom_minimum_size = Vector2(0, 50)
 	h.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	
 	# Иконка категории
 	var icon_label := Label.new()
 	icon_label.text = category_data.get("icon", "📦")
 	icon_label.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	icon_label.custom_minimum_size = Vector2(24, 0)
+	icon_label.custom_minimum_size = Vector2(30, 0)
 	h.add_child(icon_label)
 	
 	# Информация об апгрейде
@@ -188,6 +191,7 @@ func _render_upgrade_item(upg_id: String, data: Dictionary, category_data: Dicti
 	var name_label := Label.new()
 	name_label.text = "%s (ур.%d)" % [String(data.get("name", upg_id)), GameManager.get_upgrade_level(upg_id)]
 	name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	name_label.clip_contents = true
 	info_container.add_child(name_label)
 	
 	if data.has("description"):
@@ -195,6 +199,8 @@ func _render_upgrade_item(upg_id: String, data: Dictionary, category_data: Dicti
 		desc_label.text = String(data.get("description", ""))
 		desc_label.modulate = Color(0.8, 0.8, 0.8, 1.0)
 		desc_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		desc_label.clip_contents = true
+		desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		info_container.add_child(desc_label)
 	
 	h.add_child(info_container)
@@ -204,7 +210,7 @@ func _render_upgrade_item(upg_id: String, data: Dictionary, category_data: Dicti
 	var cost_label := Label.new()
 	cost_label.text = "%d 💰" % cost
 	cost_label.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	cost_label.custom_minimum_size = Vector2(60, 0)
+	cost_label.custom_minimum_size = Vector2(70, 0)
 	h.add_child(cost_label)
 	
 	# Кнопка покупки
@@ -213,6 +219,7 @@ func _render_upgrade_item(upg_id: String, data: Dictionary, category_data: Dicti
 	buy.disabled = GameManager.current_currency < cost or GameManager.get_upgrade_level(upg_id) >= int(data.get("max_level", 1))
 	buy.pressed.connect(func(): _on_buy_pressed(upg_id))
 	buy.custom_minimum_size = Vector2(80, 32)
+	buy.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	
 	# Настройка анимаций для кнопки покупки
 	_setup_button_animations(buy)

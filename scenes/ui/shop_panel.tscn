@@ -37,10 +37,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -200.0
-offset_top = -280.0
-offset_right = 200.0
-offset_bottom = 280.0
+offset_left = -250.0
+offset_top = -300.0
+offset_right = 250.0
+offset_bottom = 300.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_1")
@@ -52,10 +52,10 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 12
-theme_override_constants/margin_right = 12
-theme_override_constants/margin_bottom = 12
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
 
 [node name="VBox" type="VBoxContainer" parent="Panel/Margin"]
 layout_mode = 2
@@ -70,20 +70,32 @@ horizontal_alignment = 1
 [node name="TabContainer" type="TabContainer" parent="Panel/Margin/VBox"]
 layout_mode = 2
 size_flags_vertical = 3
+current_tab = 0
 
 [node name="Магазин" type="VBoxContainer" parent="Panel/Margin/VBox/TabContainer"]
 layout_mode = 2
+metadata/_tab_index = 0
 
-[node name="Items" type="VBoxContainer" parent="Panel/Margin/VBox/TabContainer/Магазин"]
+[node name="Items" type="ScrollContainer" parent="Panel/Margin/VBox/TabContainer/Магазин"]
 layout_mode = 2
 size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/Margin/VBox/TabContainer/Магазин/Items"]
+layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="Апгрейды" type="VBoxContainer" parent="Panel/Margin/VBox/TabContainer"]
+visible = false
 layout_mode = 2
+metadata/_tab_index = 1
 
-[node name="UpgradeStats" type="VBoxContainer" parent="Panel/Margin/VBox/TabContainer/Апгрейды"]
+[node name="UpgradeStats" type="ScrollContainer" parent="Panel/Margin/VBox/TabContainer/Апгрейды"]
 layout_mode = 2
 size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/Margin/VBox/TabContainer/Апгрейды/UpgradeStats"]
+layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="CloseButton" type="Button" parent="Panel/Margin/VBox"]
 layout_mode = 2
