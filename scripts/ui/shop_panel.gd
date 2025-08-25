@@ -107,16 +107,24 @@ func _load_upgrades() -> void:
 		upgrades = {}
 		categories = data.get("categories", {})
 		
+		print("[ShopPanel] Загружены категории: ", categories.keys())
+		print("[ShopPanel] Загружены апгрейды: ", upgrades.keys())
+		
 		# Загружаем только апгрейды (исключаем секцию categories)
 		for key in data.keys():
 			if key != "categories":
 				upgrades[key] = data[key]
+		
+		print("[ShopPanel] После фильтрации апгрейды: ", upgrades.keys())
 	else:
 		push_warning("Failed to parse upgrades.json")
 		upgrades = {}
 		categories = {}
 
 func _setup_categories() -> void:
+	print("[ShopPanel] Настройка категорий...")
+	print("[ShopPanel] Доступные категории: ", categories.keys())
+	
 	# Удаляем все существующие вкладки кроме "Апгрейды"
 	while tab_container.get_tab_count() > 1:
 		tab_container.remove_child(tab_container.get_child(1))
@@ -126,8 +134,14 @@ func _setup_categories() -> void:
 	
 	# Создаем вкладки для каждой категории
 	for category_id in category_order:
+		print("[ShopPanel] Проверяем категорию: ", category_id)
 		if categories.has(category_id):
+			print("[ShopPanel] Создаем вкладку для: ", category_id)
 			_create_category_tab(category_id)
+		else:
+			print("[ShopPanel] Категория не найдена: ", category_id)
+	
+	print("[ShopPanel] Всего вкладок создано: ", tab_container.get_tab_count())
 	
 	# Устанавливаем активную вкладку
 	if active_tab_index < tab_container.get_tab_count():
@@ -138,6 +152,8 @@ func _setup_categories() -> void:
 
 func _create_category_tab(category_id: String) -> void:
 	var category_data = categories[category_id]
+	print("[ShopPanel] Создание вкладки для категории: ", category_id)
+	print("[ShopPanel] Данные категории: ", category_data)
 	
 	# Создаем контейнер для вкладки
 	var tab_container_node = VBoxContainer.new()
@@ -159,6 +175,7 @@ func _create_category_tab(category_id: String) -> void:
 	# Устанавливаем название вкладки с иконкой
 	var tab_title = "%s %s" % [category_data.get("icon", "📦"), category_data.get("name", category_id)]
 	tab_container.set_tab_title(tab_container.get_tab_count() - 1, tab_title)
+	print("[ShopPanel] Создана вкладка: ", tab_title)
 	
 	# Сохраняем ссылку на контейнер для рендеринга
 	tab_container_node.set_meta("list_container", vbox_container)
