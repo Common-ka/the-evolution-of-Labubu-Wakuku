@@ -107,8 +107,19 @@ func apply_upgrade_effect(stat: String, effect_value: float) -> void:
 			var before := auto_click_rate
 			auto_click_rate += effect_value
 			print("[GameManager] auto_click_rate: %f -> %f (+%f)" % [before, auto_click_rate, effect_value])
-			if auto_click_rate > 0 and not auto_click_timer.is_stopped():
+			
+			# Останавливаем старый таймер и запускаем новый с обновленными настройками
+			if auto_click_timer:
+				auto_click_timer.stop()
+			
+			# Если есть автоклики, запускаем таймер
+			if auto_click_rate > 0:
+				# Устанавливаем интервал таймера в зависимости от скорости автоклика
+				# Чем больше auto_click_rate, тем чаще должны происходить автоклики
+				var timer_interval = 1.0 / auto_click_rate
+				auto_click_timer.wait_time = timer_interval
 				auto_click_timer.start()
+				print("[GameManager] Автоклик запущен: %f в секунду, интервал: %f сек" % [auto_click_rate, timer_interval])
 
 		"global_multiplier":
 			var before := global_multiplier
@@ -177,7 +188,13 @@ func load_save_data(data: Dictionary) -> void:
 	
 	# Обновление авто-кликов
 	if auto_click_rate > 0:
-		auto_click_timer.start()
+		# Останавливаем старый таймер и запускаем с правильными настройками
+		if auto_click_timer:
+			auto_click_timer.stop()
+			var timer_interval = 1.0 / auto_click_rate
+			auto_click_timer.wait_time = timer_interval
+			auto_click_timer.start()
+			print("[GameManager] Автоклик восстановлен при загрузке: %f в секунду" % auto_click_rate)
 	
 	# Эмиссия сигналов обновления
 	EventBus.emit_signal("currency_changed", current_currency)
@@ -260,7 +277,10 @@ func _on_particle_effect_requested(effect_type: String, position: Vector2) -> vo
 
 func _on_auto_click_timer_timeout() -> void:
 	if auto_click_rate > 0:
-		add_currency(int(auto_click_rate))
+		# Рассчитываем значение автоклика с учетом всех множителей
+		var auto_click_value = int(ceil(auto_click_rate * global_multiplier))
+		add_currency(auto_click_value)
+		print("[GameManager] Автоклик: +%d валюты (база: %f, множитель: %f)" % [auto_click_value, auto_click_rate, global_multiplier])
 
 # Получить данные апгрейда из JSON файла
 func _get_upgrade_data(upgrade_id: String) -> Dictionary:
