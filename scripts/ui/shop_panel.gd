@@ -194,7 +194,8 @@ func _render_items() -> void:
 	
 	# Рендерим апгрейды
 	for upg_id in category_upgrades:
-		_render_upgrade_item(upg_id, upgrades[upg_id], category_data)
+		var upgrade_item = _render_upgrade_item(upg_id, upgrades[upg_id], category_data)
+		list_container.add_child(upgrade_item)
 
 func _get_upgrades_by_category(category_id: String) -> Array:
 	var result: Array = []
@@ -204,7 +205,7 @@ func _get_upgrades_by_category(category_id: String) -> Array:
 			result.append(upg_id)
 	return result
 
-func _render_upgrade_item(upg_id: String, data: Dictionary, category_data: Dictionary) -> void:
+func _render_upgrade_item(upg_id: String, data: Dictionary, category_data: Dictionary) -> Control:
 	var h := HBoxContainer.new()
 	h.custom_minimum_size = Vector2(0, 40)
 	h.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -258,7 +259,8 @@ func _render_upgrade_item(upg_id: String, data: Dictionary, category_data: Dicti
 	_setup_button_animations(buy)
 	
 	h.add_child(buy)
-	list_container.add_child(h)
+	
+	return h
 
 func _render_upgrade_stats() -> void:
 	for child in upgrade_stats_container.get_children():

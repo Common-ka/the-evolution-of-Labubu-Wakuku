@@ -73,7 +73,6 @@ size_flags_vertical = 3
 current_tab = 0
 
 [node name="Апгрейды" type="VBoxContainer" parent="Panel/Margin/VBox/TabContainer"]
-visible = false
 layout_mode = 2
 metadata/_tab_index = 0
 
