@@ -6,8 +6,8 @@ extends Control
 var upgrades: Dictionary = {}
 var categories: Dictionary = {}
 var current_category: String = ""
+var active_tab_index: int = 0  # Сохраняем активную вкладку
 
-@onready var list_container: VBoxContainer = $Panel/Margin/VBox/TabContainer/Магазин/Items/VBoxContainer
 @onready var upgrade_stats_container: VBoxContainer = $Panel/Margin/VBox/TabContainer/Апгрейды/UpgradeStats/VBoxContainer
 @onready var close_button: Button = $Panel/Margin/VBox/CloseButton
 @onready var overlay: ColorRect = $Overlay
@@ -46,11 +46,14 @@ func _on_close_pressed() -> void:
 	animate_hide()
 
 func _on_tab_changed(tab: int) -> void:
+	# Сохраняем активную вкладку
+	active_tab_index = tab
+	
 	# Обновляем содержимое при смене вкладки
-	if tab == 0: # Магазин
-		_render_items()
-	elif tab == 1: # Апгрейды
+	if tab == tab_container.get_tab_count() - 1: # Последняя вкладка - "Апгрейды"
 		_render_upgrade_stats()
+	else: # Вкладки категорий
+		_render_items()
 
 func _prepare_initial_state() -> void:
 	overlay.visible = true
@@ -114,62 +117,92 @@ func _load_upgrades() -> void:
 		categories = {}
 
 func _setup_categories() -> void:
-	# Устанавливаем названия вкладок на основе категорий
-	if categories.has("click_upgrades"):
-		tab_container.set_tab_title(0, categories["click_upgrades"]["name"])
-	if categories.has("auto_click_upgrades"):
-		tab_container.set_tab_title(1, categories["auto_click_upgrades"]["name"])
+	# Удаляем все существующие вкладки кроме "Апгрейды"
+	while tab_container.get_tab_count() > 1:
+		tab_container.remove_child(tab_container.get_child(1))
 	
-	# Если нет категорий, используем стандартные названия
-	if categories.is_empty():
-		tab_container.set_tab_title(0, "Магазин")
-		tab_container.set_tab_title(1, "Апгрейды")
+	# Порядок категорий по важности
+	var category_order = ["click_upgrades", "auto_click_upgrades", "multiplier_upgrades"]
+	
+	# Создаем вкладки для каждой категории
+	for category_id in category_order:
+		if categories.has(category_id):
+			_create_category_tab(category_id)
+	
+	# Устанавливаем активную вкладку
+	if active_tab_index < tab_container.get_tab_count():
+		tab_container.current_tab = active_tab_index
+	else:
+		tab_container.current_tab = 0
+		active_tab_index = 0
+
+func _create_category_tab(category_id: String) -> void:
+	var category_data = categories[category_id]
+	
+	# Создаем контейнер для вкладки
+	var tab_container_node = VBoxContainer.new()
+	tab_container_node.name = category_id
+	
+	# Создаем ScrollContainer для прокрутки
+	var scroll_container = ScrollContainer.new()
+	scroll_container.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	
+	# Создаем VBoxContainer для элементов
+	var vbox_container = VBoxContainer.new()
+	vbox_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll_container.add_child(vbox_container)
+	
+	# Добавляем в иерархию
+	tab_container_node.add_child(scroll_container)
+	tab_container.add_child(tab_container_node)
+	
+	# Устанавливаем название вкладки с иконкой
+	var tab_title = "%s %s" % [category_data.get("icon", "📦"), category_data.get("name", category_id)]
+	tab_container.set_tab_title(tab_container.get_tab_count() - 1, tab_title)
+	
+	# Сохраняем ссылку на контейнер для рендеринга
+	tab_container_node.set_meta("list_container", vbox_container)
+	tab_container_node.set_meta("category_id", category_id)
 
 func _render_items() -> void:
+	# Получаем текущую активную вкладку
+	var current_tab = tab_container.get_current_tab_control()
+	if not current_tab:
+		return
+	
+	# Получаем контейнер для рендеринга
+	var list_container = current_tab.get_meta("list_container", null)
+	if not list_container:
+		return
+	
+	# Очищаем контейнер
 	for child in list_container.get_children():
 		child.queue_free()
 	
-	# Группируем апгрейды по категориям
-	var categorized_upgrades: Dictionary = {}
+	# Получаем ID категории
+	var category_id = current_tab.get_meta("category_id", "")
+	if category_id.is_empty():
+		return
+	
+	# Получаем данные категории
+	var category_data = categories.get(category_id, {})
+	if category_data.is_empty():
+		return
+	
+	# Получаем апгрейды для этой категории
+	var category_upgrades = _get_upgrades_by_category(category_id)
+	
+	# Рендерим апгрейды
+	for upg_id in category_upgrades:
+		_render_upgrade_item(upg_id, upgrades[upg_id], category_data)
+
+func _get_upgrades_by_category(category_id: String) -> Array:
+	var result: Array = []
 	for upg_id in upgrades.keys():
 		var data: Dictionary = upgrades[upg_id]
-		var category = data.get("category", "unknown")
-		if not categorized_upgrades.has(category):
-			categorized_upgrades[category] = []
-		categorized_upgrades[category].append(upg_id)
-	
-	# Рендерим апгрейды по категориям
-	for category_id in categorized_upgrades.keys():
-		if categories.has(category_id):
-			var category_data = categories[category_id]
-			
-			# Заголовок категории
-			var category_header := HBoxContainer.new()
-			category_header.custom_minimum_size = Vector2(0, 24)
-			category_header.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			
-			var icon_label := Label.new()
-			icon_label.text = category_data.get("icon", "📦")
-			icon_label.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-			icon_label.custom_minimum_size = Vector2(20, 0)
-			category_header.add_child(icon_label)
-			
-			var name_label := Label.new()
-			name_label.text = category_data.get("name", category_id)
-			name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			name_label.modulate = Color(1.0, 0.8, 0.0, 1.0)  # Яркий желтый цвет для заголовков
-			category_header.add_child(name_label)
-			
-			list_container.add_child(category_header)
-			
-			# Разделитель
-			var separator := HSeparator.new()
-			separator.modulate = Color(0.6, 0.6, 0.6, 1.0)
-			list_container.add_child(separator)
-			
-			# Апгрейды категории
-			for upg_id in categorized_upgrades[category_id]:
-				_render_upgrade_item(upg_id, upgrades[upg_id], category_data)
+		if data.get("category", "") == category_id:
+			result.append(upg_id)
+	return result
 
 func _render_upgrade_item(upg_id: String, data: Dictionary, category_data: Dictionary) -> void:
 	var h := HBoxContainer.new()
