@@ -72,18 +72,6 @@ layout_mode = 2
 size_flags_vertical = 3
 current_tab = 0
 
-[node name="Апгрейды" type="VBoxContainer" parent="Panel/Margin/VBox/TabContainer"]
-layout_mode = 2
-metadata/_tab_index = 0
-
-[node name="UpgradeStats" type="ScrollContainer" parent="Panel/Margin/VBox/TabContainer/Апгрейды"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel/Margin/VBox/TabContainer/Апгрейды/UpgradeStats"]
-layout_mode = 2
-size_flags_horizontal = 3
-
 [node name="CloseButton" type="Button" parent="Panel/Margin/VBox"]
 layout_mode = 2
 size_flags_horizontal = 3

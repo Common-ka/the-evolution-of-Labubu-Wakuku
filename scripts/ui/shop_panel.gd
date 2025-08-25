@@ -8,7 +8,7 @@ var categories: Dictionary = {}
 var current_category: String = ""
 var active_tab_index: int = 0  # Сохраняем активную вкладку
 
-@onready var upgrade_stats_container: VBoxContainer = $Panel/Margin/VBox/TabContainer/Апгрейды/UpgradeStats/VBoxContainer
+# @onready var upgrade_stats_container: VBoxContainer = $Panel/Margin/VBox/TabContainer/Апгрейды/UpgradeStats/VBoxContainer
 @onready var close_button: Button = $Panel/Margin/VBox/CloseButton
 @onready var overlay: ColorRect = $Overlay
 @onready var panel: Panel = $Panel
@@ -40,7 +40,7 @@ func _ready() -> void:
 	_load_upgrades()
 	_setup_categories()
 	_render_items()
-	_render_upgrade_stats()
+	# _render_upgrade_stats()
 
 func _on_close_pressed() -> void:
 	animate_hide()
@@ -52,12 +52,12 @@ func _on_tab_changed(tab: int) -> void:
 	print("[ShopPanel] Переключение на вкладку: ", tab, " из ", tab_container.get_tab_count())
 	
 	# Обновляем содержимое при смене вкладки
-	if tab == tab_container.get_tab_count() - 1: # Последняя вкладка - "Апгрейды"
-		print("[ShopPanel] Рендерим статистику апгрейдов")
-		_render_upgrade_stats()
-	else: # Вкладки категорий
-		print("[ShopPanel] Рендерим апгрейды для категории")
-		_render_items()
+	# if tab == tab_container.get_tab_count() - 1: # Последняя вкладка - "Апгрейды"
+	# 	print("[ShopPanel] Рендерим статистику апгрейдов")
+	# 	_render_upgrade_stats()
+	# else: # Вкладки категорий
+	print("[ShopPanel] Рендерим апгрейды для категории")
+	_render_items()
 
 func _prepare_initial_state() -> void:
 	overlay.visible = true
@@ -130,8 +130,12 @@ func _setup_categories() -> void:
 	print("[ShopPanel] Доступные категории: ", categories.keys())
 	
 	# Удаляем все существующие вкладки кроме "Апгрейды"
-	while tab_container.get_tab_count() > 1:
-		tab_container.remove_child(tab_container.get_child(1))
+	# while tab_container.get_tab_count() > 1:
+	# 	tab_container.remove_child(tab_container.get_child(1))
+	
+	# Удаляем все существующие вкладки
+	while tab_container.get_tab_count() > 0:
+		tab_container.remove_child(tab_container.get_child(0))
 	
 	# Порядок категорий по важности
 	var category_order = ["click_upgrades", "auto_click_upgrades", "multiplier_upgrades"]
@@ -193,9 +197,9 @@ func _render_items() -> void:
 		return
 	
 	# Проверяем, что это не вкладка статистики
-	if current_tab.name == "Апгрейды":
-		print("[ShopPanel] _render_items: пропускаем вкладку статистики")
-		return
+	# if current_tab.name == "Апгрейды":
+	# 	print("[ShopPanel] _render_items: пропускаем вкладку статистики")
+	# 	return
 	
 	# Получаем контейнер для рендеринга
 	var list_container = current_tab.get_meta("list_container", null)
@@ -300,55 +304,55 @@ func _render_upgrade_item(upg_id: String, data: Dictionary, category_data: Dicti
 	
 	return h
 
-func _render_upgrade_stats() -> void:
-	for child in upgrade_stats_container.get_children():
-		child.queue_free()
-	
-	# Заголовок статистики
-	var stats_header := Label.new()
-	stats_header.text = "Статистика апгрейдов"
-	stats_header.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	stats_header.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	upgrade_stats_container.add_child(stats_header)
-	
-	# Разделитель
-	var separator := HSeparator.new()
-	upgrade_stats_container.add_child(separator)
-	
-	# Общая статистика
-	var total_upgrades := 0
-	var total_levels := 0
-	var total_spent := 0
-	
-	for upg_id in upgrades.keys():
-		var level = GameManager.get_upgrade_level(upg_id)
-		if level > 0:
-			total_upgrades += 1
-			total_levels += level
-			# Примерный расчет потраченной валюты
-			var data = upgrades[upg_id]
-			var base_cost = float(data.get("base_cost", 0))
-			var growth = float(data.get("growth", 1.0))
-			for i in range(level):
-				total_spent += int(base_cost * pow(growth, i))
-	
-	# Отображаем статистику
-	var stats_container := VBoxContainer.new()
-	stats_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	
-	var total_label := Label.new()
-	total_label.text = "Всего апгрейдов: %d" % total_upgrades
-	stats_container.add_child(total_label)
-	
-	var levels_label := Label.new()
-	levels_label.text = "Общий уровень: %d" % total_levels
-	stats_container.add_child(levels_label)
-	
-	var spent_label := Label.new()
-	spent_label.text = "Потрачено валюты: %d" % total_spent
-	stats_container.add_child(spent_label)
-	
-	upgrade_stats_container.add_child(stats_container)
+# func _render_upgrade_stats() -> void:
+# 	for child in upgrade_stats_container.get_children():
+# 		child.queue_free()
+# 	
+# 	# Заголовок статистики
+# 	var stats_header := Label.new()
+# 	stats_header.text = "Статистика апгрейдов"
+# 	stats_header.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+# 	stats_header.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+# 	upgrade_stats_container.add_child(stats_header)
+# 	
+# 	# Разделитель
+# 	var separator := HSeparator.new()
+# 	upgrade_stats_container.add_child(separator)
+# 	
+# 	# Общая статистика
+# 	var total_upgrades := 0
+# 	var total_levels := 0
+# 	var total_spent := 0
+# 	
+# 	for upg_id in upgrades.keys():
+# 		var level = GameManager.get_upgrade_level(upg_id)
+# 		if level > 0:
+# 			total_upgrades += 1
+# 			total_levels += level
+# 			# Примерный расчет потраченной валюты
+# 			var data = upgrades[upg_id]
+# 			var base_cost = float(data.get("base_cost", 0))
+# 			var growth = float(data.get("growth", 1.0))
+# 			for i in range(level):
+# 				total_spent += int(base_cost * pow(growth, i))
+# 	
+# 	# Отображаем статистику
+# 	var stats_container := VBoxContainer.new()
+# 	stats_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+# 	
+# 	var total_label := Label.new()
+# 	total_label.text = "Всего апгрейдов: %d" % total_upgrades
+# 	stats_container.add_child(total_label)
+# 	
+# 	var levels_label := Label.new()
+# 	levels_label.text = "Общий уровень: %d" % total_levels
+# 	stats_container.add_child(levels_label)
+# 	
+# 	var spent_label := Label.new()
+# 	spent_label.text = "Потрачено валюты: %d" % total_spent
+# 	stats_container.add_child(spent_label)
+# 	
+# 	upgrade_stats_container.add_child(stats_container)
 
 func _calc_cost(upg_id: String, data: Dictionary) -> int:
 	var lvl := GameManager.get_upgrade_level(upg_id)
@@ -374,7 +378,7 @@ func _on_buy_pressed(upg_id: String) -> void:
 		print("[ShopPanel] after apply: click_multiplier=", GameManager.click_multiplier, ", level=", GameManager.get_upgrade_level(upg_id))
 	EventBus.emit_signal("upgrade_purchased", upg_id)
 	_render_items()
-	_render_upgrade_stats()
+	# _render_upgrade_stats()
 
 # Настройка анимаций для кнопки
 func _setup_button_animations(button: Button) -> void:
