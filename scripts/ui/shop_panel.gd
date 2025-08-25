@@ -49,10 +49,14 @@ func _on_tab_changed(tab: int) -> void:
 	# Сохраняем активную вкладку
 	active_tab_index = tab
 	
+	print("[ShopPanel] Переключение на вкладку: ", tab, " из ", tab_container.get_tab_count())
+	
 	# Обновляем содержимое при смене вкладки
 	if tab == tab_container.get_tab_count() - 1: # Последняя вкладка - "Апгрейды"
+		print("[ShopPanel] Рендерим статистику апгрейдов")
 		_render_upgrade_stats()
 	else: # Вкладки категорий
+		print("[ShopPanel] Рендерим апгрейды для категории")
 		_render_items()
 
 func _prepare_initial_state() -> void:
@@ -185,11 +189,18 @@ func _render_items() -> void:
 	# Получаем текущую активную вкладку
 	var current_tab = tab_container.get_current_tab_control()
 	if not current_tab:
+		print("[ShopPanel] _render_items: нет активной вкладки")
+		return
+	
+	# Проверяем, что это не вкладка статистики
+	if current_tab.name == "Апгрейды":
+		print("[ShopPanel] _render_items: пропускаем вкладку статистики")
 		return
 	
 	# Получаем контейнер для рендеринга
 	var list_container = current_tab.get_meta("list_container", null)
 	if not list_container:
+		print("[ShopPanel] _render_items: нет list_container для вкладки: ", current_tab.name)
 		return
 	
 	# Очищаем контейнер
@@ -208,18 +219,28 @@ func _render_items() -> void:
 	
 	# Получаем апгрейды для этой категории
 	var category_upgrades = _get_upgrades_by_category(category_id)
+	print("[ShopPanel] Найдено апгрейдов для категории ", category_id, ": ", category_upgrades.size())
 	
 	# Рендерим апгрейды
 	for upg_id in category_upgrades:
+		print("[ShopPanel] Рендерим апгрейд: ", upg_id)
 		var upgrade_item = _render_upgrade_item(upg_id, upgrades[upg_id], category_data)
 		list_container.add_child(upgrade_item)
 
 func _get_upgrades_by_category(category_id: String) -> Array:
 	var result: Array = []
+	print("[ShopPanel] Поиск апгрейдов для категории: ", category_id)
+	print("[ShopPanel] Всего апгрейдов в словаре: ", upgrades.size())
+	
 	for upg_id in upgrades.keys():
 		var data: Dictionary = upgrades[upg_id]
-		if data.get("category", "") == category_id:
+		var upgrade_category = data.get("category", "")
+		print("[ShopPanel] Апгрейд ", upg_id, " имеет категорию: ", upgrade_category)
+		if upgrade_category == category_id:
 			result.append(upg_id)
+			print("[ShopPanel] Добавлен апгрейд: ", upg_id)
+	
+	print("[ShopPanel] Итого найдено для категории ", category_id, ": ", result.size())
 	return result
 
 func _render_upgrade_item(upg_id: String, data: Dictionary, category_data: Dictionary) -> Control:
