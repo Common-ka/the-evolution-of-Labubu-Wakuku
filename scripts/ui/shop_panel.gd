@@ -191,10 +191,15 @@ func _create_category_tab(category_id: String) -> void:
 	tab_container_node.add_child(scroll_container)
 	tab_container.add_child(tab_container_node)
 	
-	# Устанавливаем название вкладки с иконкой
-	var tab_title = "%s %s" % [category_data.get("icon", "📦"), category_data.get("name", category_id)]
+	# Устанавливаем название вкладки только с иконкой
+	var tab_title = category_data.get("icon", "📦")
 	tab_container.set_tab_title(tab_container.get_tab_count() - 1, tab_title)
-	print("[ShopPanel] Создана вкладка: ", tab_title)
+	
+	# Добавляем tooltip для объяснения категории
+	var tab_index = tab_container.get_tab_count() - 1
+	tab_container.set_tab_tooltip(tab_index, category_data.get("name", category_id))
+	
+	print("[ShopPanel] Создана вкладка: ", tab_title, " для категории: ", category_data.get("name", category_id))
 	
 	# Сохраняем ссылку на контейнер для рендеринга
 	tab_container_node.set_meta("list_container", vbox_container)
