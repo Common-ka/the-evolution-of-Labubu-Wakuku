@@ -42,6 +42,10 @@ func save_game() -> void:
 		"game_data": GameManager.get_save_data()
 	}
 	
+	# Добавляем данные достижений
+	if AchievementManager:
+		save_data["achievements"] = AchievementManager.get_save_data()
+	
 	var json_string: String = JSON.stringify(save_data)
 	var file: FileAccess = FileAccess.open(SAVE_FILE_PATH, FileAccess.WRITE)
 	
@@ -86,6 +90,10 @@ func load_game() -> void:
 			# Загрузка игровых данных
 			var game_data: Dictionary = save_data.get("game_data", {})
 			GameManager.load_save_data(game_data)
+			
+			# Загрузка данных достижений
+			if save_data.has("achievements") and AchievementManager:
+				AchievementManager.load_save_data(save_data.achievements)
 			
 			print("Игра загружена успешно")
 			EventBus.emit_signal("load_completed")

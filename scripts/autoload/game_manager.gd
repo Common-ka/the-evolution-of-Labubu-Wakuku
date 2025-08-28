@@ -200,6 +200,17 @@ func load_save_data(data: Dictionary) -> void:
 	EventBus.emit_signal("currency_changed", current_currency)
 	EventBus.emit_signal("level_up", current_level)
 	EventBus.emit_signal("game_state_changed")
+	
+	# Обновляем прогресс достижений при загрузке
+	if AchievementManager:
+		AchievementManager.progress.update_clicks(total_clicks)
+		AchievementManager.progress.update_currency(total_currency_earned)
+		AchievementManager.progress.update_levels(current_level)
+		# Подсчитываем общее количество купленных апгрейдов
+		var total_upgrades = 0
+		for level in purchased_upgrades.values():
+			total_upgrades += int(level)
+		AchievementManager.progress.update_upgrades(total_upgrades)
 
 # Получить уровень апгрейда
 func get_upgrade_level(upgrade_id: String) -> int:
@@ -226,6 +237,10 @@ func reset_game() -> void:
 	purchased_upgrades = {}
 	
 	auto_click_timer.stop()
+	
+	# Сброс прогресса достижений
+	if AchievementManager:
+		AchievementManager.progress.reset_progress()
 	
 	EventBus.emit_signal("currency_changed", current_currency)
 	EventBus.emit_signal("level_up", current_level)
