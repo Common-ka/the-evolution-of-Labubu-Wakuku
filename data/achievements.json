@@ -1,0 +1,170 @@
+{
+  "achievements": {
+    "click_milestones": {
+      "name": "Мастер кликов",
+      "description": "Достигните {target} кликов",
+      "icon": "👆",
+      "category": "progress",
+      "type": "cumulative_clicks",
+      "tiers": [
+        {
+          "id": "first_click",
+          "name": "Первый клик",
+          "description": "Сделайте первый клик",
+          "target": 1,
+          "reward": {
+            "type": "currency",
+            "amount": 10
+          }
+        },
+        {
+          "id": "click_10",
+          "name": "Начинающий кликер",
+          "description": "Сделайте 10 кликов",
+          "target": 10,
+          "reward": {
+            "type": "currency",
+            "amount": 50
+          }
+        },
+        {
+          "id": "click_100",
+          "name": "Опытный кликер",
+          "description": "Сделайте 100 кликов",
+          "target": 100,
+          "reward": {
+            "type": "currency",
+            "amount": 200
+          }
+        },
+        {
+          "id": "click_1000",
+          "name": "Мастер кликов",
+          "description": "Сделайте 1000 кликов",
+          "target": 1000,
+          "reward": {
+            "type": "currency",
+            "amount": 1000
+          }
+        }
+      ]
+    },
+    "currency_milestones": {
+      "name": "Богач",
+      "description": "Накопите {target} валюты",
+      "icon": "💰",
+      "category": "progress",
+      "type": "total_currency",
+      "tiers": [
+        {
+          "id": "first_currency",
+          "name": "Первая монета",
+          "description": "Накопите 10 валюты",
+          "target": 10,
+          "reward": {
+            "type": "currency",
+            "amount": 25
+          }
+        },
+        {
+          "id": "currency_100",
+          "name": "Начинающий богач",
+          "description": "Накопите 100 валюты",
+          "target": 100,
+          "reward": {
+            "type": "currency",
+            "amount": 100
+          }
+        },
+        {
+          "id": "currency_1000",
+          "name": "Состоятельный игрок",
+          "description": "Накопите 1000 валюты",
+          "target": 1000,
+          "reward": {
+            "type": "currency",
+            "amount": 500
+          }
+        }
+      ]
+    },
+    "upgrade_milestones": {
+      "name": "Апгрейдер",
+      "description": "Покупайте апгрейды",
+      "icon": "⚡",
+      "category": "progress",
+      "type": "upgrades_purchased",
+      "tiers": [
+        {
+          "id": "first_upgrade",
+          "name": "Первый апгрейд",
+          "description": "Купите первый апгрейд",
+          "target": 1,
+          "reward": {
+            "type": "currency",
+            "amount": 25
+          }
+        },
+        {
+          "id": "upgrades_5",
+          "name": "Любитель апгрейдов",
+          "description": "Купите 5 апгрейдов",
+          "target": 5,
+          "reward": {
+            "type": "currency",
+            "amount": 100
+          }
+        },
+        {
+          "id": "upgrades_10",
+          "name": "Эксперт апгрейдов",
+          "description": "Купите 10 апгрейдов",
+          "target": 10,
+          "reward": {
+            "type": "currency",
+            "amount": 250
+          }
+        }
+      ]
+    },
+    "level_milestones": {
+      "name": "Развитие",
+      "description": "Повышайте уровни апгрейдов",
+      "icon": "📈",
+      "category": "progress",
+      "type": "total_levels",
+      "tiers": [
+        {
+          "id": "level_5",
+          "name": "Начинающий",
+          "description": "Достигните 5 уровней апгрейдов",
+          "target": 5,
+          "reward": {
+            "type": "currency",
+            "amount": 75
+          }
+        },
+        {
+          "id": "level_15",
+          "name": "Опытный",
+          "description": "Достигните 15 уровней апгрейдов",
+          "target": 15,
+          "reward": {
+            "type": "currency",
+            "amount": 200
+          }
+        },
+        {
+          "id": "level_30",
+          "name": "Мастер",
+          "description": "Достигните 30 уровней апгрейдов",
+          "target": 30,
+          "reward": {
+            "type": "currency",
+            "amount": 500
+          }
+        }
+      ]
+    }
+  }
+}
