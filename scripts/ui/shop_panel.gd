@@ -51,6 +51,17 @@ func _on_tab_changed(tab: int) -> void:
 	
 	print("[ShopPanel] Переключение на вкладку: ", tab, " из ", tab_container.get_tab_count())
 	
+	# Проверяем, что вкладка существует и имеет корректные мета-данные
+	var current_tab = tab_container.get_current_tab_control()
+	if not current_tab:
+		print("[ShopPanel] _on_tab_changed: нет активной вкладки")
+		return
+	
+	# Проверяем, что у вкладки есть необходимые мета-данные
+	if not current_tab.has_meta("list_container") or not current_tab.has_meta("category_id"):
+		print("[ShopPanel] _on_tab_changed: у вкладки отсутствуют необходимые мета-данные: ", current_tab.name)
+		return
+	
 	# Обновляем содержимое при смене вкладки
 	# if tab == tab_container.get_tab_count() - 1: # Последняя вкладка - "Апгрейды"
 	# 	print("[ShopPanel] Рендерим статистику апгрейдов")
@@ -188,6 +199,11 @@ func _create_category_tab(category_id: String) -> void:
 	# Сохраняем ссылку на контейнер для рендеринга
 	tab_container_node.set_meta("list_container", vbox_container)
 	tab_container_node.set_meta("category_id", category_id)
+	
+	# Проверяем, что мета-данные установлены корректно
+	print("[ShopPanel] Проверка мета-данных для вкладки: ", category_id)
+	print("[ShopPanel] list_container установлен: ", tab_container_node.has_meta("list_container"))
+	print("[ShopPanel] category_id установлен: ", tab_container_node.has_meta("category_id"))
 
 func _render_items() -> void:
 	# Получаем текущую активную вкладку
@@ -196,10 +212,21 @@ func _render_items() -> void:
 		print("[ShopPanel] _render_items: нет активной вкладки")
 		return
 	
+	print("[ShopPanel] _render_items: активная вкладка: ", current_tab.name)
+	print("[ShopPanel] _render_items: класс вкладки: ", current_tab.get_class())
+	
 	# Проверяем, что это не вкладка статистики
 	# if current_tab.name == "Апгрейды":
 	# 	print("[ShopPanel] _render_items: пропускаем вкладку статистики")
 	# 	return
+	
+	# Проверяем, что у вкладки есть необходимые мета-данные
+	if not current_tab.has_meta("list_container") or not current_tab.has_meta("category_id"):
+		print("[ShopPanel] _render_items: у вкладки отсутствуют необходимые мета-данные: ", current_tab.name)
+		print("[ShopPanel] _render_items: list_container: ", current_tab.has_meta("list_container"))
+		print("[ShopPanel] _render_items: category_id: ", current_tab.has_meta("category_id"))
+		print("[ShopPanel] _render_items: все мета-ключи: ", current_tab.get_meta_list())
+		return
 	
 	# Получаем контейнер для рендеринга
 	var list_container = current_tab.get_meta("list_container", null)
