@@ -261,7 +261,8 @@ func _render_items() -> void:
 	for upg_id in category_upgrades:
 		print("[ShopPanel] Рендерим апгрейд: ", upg_id)
 		var upgrade_item = _render_upgrade_item(upg_id, upgrades[upg_id], category_data)
-		list_container.add_child(upgrade_item)
+		if is_instance_valid(upgrade_item) and is_instance_valid(list_container):
+			list_container.add_child(upgrade_item)
 
 func _get_upgrades_by_category(category_id: String) -> Array:
 	var result: Array = []
@@ -334,7 +335,14 @@ func _render_upgrade_item(upg_id: String, data: Dictionary, category_data: Dicti
 	
 	h.add_child(buy)
 	
-	return h
+	# Проверяем, что кнопка все еще существует перед возвратом
+	if is_instance_valid(buy):
+		return h
+	else:
+		# Если кнопка была удалена, возвращаем пустой контейнер
+		var empty_container = VBoxContainer.new()
+		empty_container.custom_minimum_size = Vector2(0, 40)
+		return empty_container
 
 # func _render_upgrade_stats() -> void:
 # 	for child in upgrade_stats_container.get_children():
@@ -414,6 +422,10 @@ func _on_buy_pressed(upg_id: String) -> void:
 
 # Настройка анимаций для кнопки
 func _setup_button_animations(button: Button) -> void:
+	# Проверяем, что кнопка существует
+	if not is_instance_valid(button):
+		return
+	
 	# Подключаем сигналы для анимаций
 	button.mouse_entered.connect(func(): _on_button_mouse_entered(button))
 	button.mouse_exited.connect(func(): _on_button_mouse_exited(button))
@@ -425,7 +437,7 @@ func _setup_button_animations(button: Button) -> void:
 
 # Эффект при наведении мыши на кнопку
 func _on_button_mouse_entered(button: Button) -> void:
-	if button.disabled:
+	if button.disabled or not is_instance_valid(button):
 		return
 	
 	var tween = create_tween()
@@ -433,7 +445,7 @@ func _on_button_mouse_entered(button: Button) -> void:
 
 # Убираем эффект при уходе мыши с кнопки
 func _on_button_mouse_exited(button: Button) -> void:
-	if button.disabled:
+	if button.disabled or not is_instance_valid(button):
 		return
 	
 	var tween = create_tween()
@@ -441,7 +453,7 @@ func _on_button_mouse_exited(button: Button) -> void:
 
 # Визуальный эффект при нажатии кнопки
 func _on_button_pressed_visual(button: Button) -> void:
-	if button.disabled:
+	if button.disabled or not is_instance_valid(button):
 		return
 	
 	var tween = create_tween()
@@ -449,7 +461,7 @@ func _on_button_pressed_visual(button: Button) -> void:
 
 # Визуальный эффект при отпускании кнопки
 func _on_button_released_visual(button: Button) -> void:
-	if button.disabled:
+	if button.disabled or not is_instance_valid(button):
 		return
 	
 	var tween = create_tween()
