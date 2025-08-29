@@ -17,6 +17,7 @@ func _connect_signals() -> void:
 	EventBus.currency_changed.connect(_on_currency_changed)
 	EventBus.upgrade_purchased.connect(_on_upgrade_purchased)
 	EventBus.level_up.connect(_on_level_up)
+	EventBus.achievement_unlocked.connect(_on_achievement_unlocked)
 	print("[AchievementManager] Сигналы подключены")
 
 func _load_achievements() -> void:
@@ -68,6 +69,35 @@ func _check_achievement_condition(achievement: Achievement) -> void:
 			achievement.update_progress(progress.upgrades_purchased)
 		"total_levels":
 			achievement.update_progress(progress.total_levels)
+
+# Обработка выдачи наград и фиксация анлоков
+func _on_achievement_unlocked(achievement_id: String) -> void:
+	# Исключаем повторную выдачу
+	if unlocked_achievements.has(achievement_id):
+		return
+
+	var a: Achievement = achievements.get(achievement_id, null)
+	if a == null:
+		return
+
+	# Фиксируем анлок, чтобы не дублировать награды
+	unlocked_achievements.append(achievement_id)
+	print("[AchievementManager] Выдача награды за достижение: ", achievement_id)
+
+	match a.reward_type:
+		"currency":
+			GameManager.add_currency(int(a.reward_amount))
+			print("[AchievementManager] Награда валютой: +", a.reward_amount)
+		"multiplier":
+			GameManager.apply_upgrade_effect("global_multiplier", float(a.reward_amount))
+			print("[AchievementManager] Награда множителем: +", a.reward_amount)
+		"unlock":
+			# Хук для будущих разблокировок контента
+			EventBus.emit_signal("game_state_changed")
+			print("[AchievementManager] Награда: разблокировка контента (hook)")
+
+	# Сигнал для UI/уведомлений
+	EventBus.emit_signal("achievement_condition_met", achievement_id)
 
 # Обработчики событий
 func _on_click_performed(click_value: int) -> void:
