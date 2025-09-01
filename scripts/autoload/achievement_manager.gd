@@ -150,7 +150,18 @@ func get_save_data() -> Dictionary:
 
 func load_save_data(data: Dictionary) -> void:
 	if data.has("unlocked"):
-		unlocked_achievements = data.unlocked as Array[String]
+		var unlocked_data = data.unlocked
+		# Безопасная проверка и приведение типов
+		if unlocked_data is Array:
+			unlocked_achievements.clear()
+			for item in unlocked_data:
+				if item is String:
+					unlocked_achievements.append(item)
+				else:
+					push_warning("[AchievementManager] Пропущен невалидный элемент: ", item)
+		else:
+			push_warning("[AchievementManager] Неверный тип данных для unlocked: ", typeof(unlocked_data))
+		
 		# Обновляем состояние достижений
 		for achievement_id in unlocked_achievements:
 			if achievements.has(achievement_id):
