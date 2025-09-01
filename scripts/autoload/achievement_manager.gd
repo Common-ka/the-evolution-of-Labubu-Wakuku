@@ -150,7 +150,7 @@ func get_save_data() -> Dictionary:
 
 func load_save_data(data: Dictionary) -> void:
 	if data.has("unlocked"):
-		unlocked_achievements = data.unlocked
+		unlocked_achievements = data.unlocked as Array[String]
 		# Обновляем состояние достижений
 		for achievement_id in unlocked_achievements:
 			if achievements.has(achievement_id):
