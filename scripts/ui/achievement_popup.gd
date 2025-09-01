@@ -13,7 +13,6 @@ extends Control
 # Настройки анимации
 const ANIMATION_DURATION: float = 0.3
 const DISPLAY_DURATION: float = 4.0
-const SLIDE_DISTANCE: float = 150.0
 
 # Таймер для автоматического закрытия
 var auto_close_timer: Timer
@@ -66,33 +65,24 @@ func show_achievement(achievement_id: String) -> void:
 
 # Анимация появления
 func _animate_in() -> void:
-	# Начальное состояние: скрыто и сдвинуто вниз (за пределами экрана)
+	# Начальное состояние: скрыто
 	modulate.a = 0.0
-	panel.position.y = SLIDE_DISTANCE
 	
 	# Показываем
 	show()
 	
-	# Анимация появления
+	# Анимация появления - только fade in
 	var tween = create_tween()
-	tween.set_parallel(true)
-	
-	# Fade in
 	tween.tween_property(self, "modulate:a", 1.0, ANIMATION_DURATION)
-	# Slide up (из-за пределов экрана снизу в нормальное положение)
-	tween.tween_property(panel, "position:y", 0.0, ANIMATION_DURATION).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
 	
 	print("[AchievementPopup] Анимация появления запущена")
 
 # Анимация исчезновения
 func _animate_out() -> void:
 	var tween = create_tween()
-	tween.set_parallel(true)
 	
 	# Fade out
 	tween.tween_property(self, "modulate:a", 0.0, ANIMATION_DURATION)
-	# Slide down (вниз за пределы экрана)
-	tween.tween_property(panel, "position:y", SLIDE_DISTANCE, ANIMATION_DURATION).set_ease(Tween.EASE_IN)
 	
 	# Скрываем после завершения анимации
 	tween.tween_callback(hide)
