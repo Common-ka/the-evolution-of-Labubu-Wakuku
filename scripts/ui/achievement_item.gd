@@ -11,19 +11,28 @@ class_name AchievementItem
 @onready var status_label: Label = $Status
 
 var achievement: Achievement
+var _is_ready: bool = false
 
-func _on_ready() -> void:
-    # Для совместимости с подключением в tscn
-    pass
+func _ready() -> void:
+    _is_ready = true
+    if achievement != null:
+        _refresh()
 
 func setup(achievement_data: Achievement) -> void:
     achievement = achievement_data
-    _refresh()
+    if _is_ready:
+        _refresh()
+    else:
+        call_deferred("_refresh")
 
 func _refresh() -> void:
     if achievement == null:
         return
 
+    if icon_label == null or name_label == null or description_label == null:
+        # Узлы ещё не готовы; попробуем повторить после кадра
+        call_deferred("_refresh")
+        return
     icon_label.text = achievement.icon
     name_label.text = achievement.name
     description_label.text = achievement.get_description_with_target()

@@ -41,8 +41,8 @@ func _build_tabs() -> void:
 		var items := AchievementManager.get_achievements_by_category(category_id)
 		for a in items:
 			var item: AchievementItem = item_scene.instantiate()
-			item.setup(a)
 			list.add_child(item)
+			item.setup(a)
 
 		scroll.add_child(list)
 		tab.add_child(scroll)
