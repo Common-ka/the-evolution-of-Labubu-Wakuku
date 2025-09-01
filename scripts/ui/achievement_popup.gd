@@ -13,7 +13,7 @@ extends Control
 # Настройки анимации
 const ANIMATION_DURATION: float = 0.3
 const DISPLAY_DURATION: float = 4.0
-const SLIDE_DISTANCE: float = 100.0
+const SLIDE_DISTANCE: float = 150.0
 
 # Таймер для автоматического закрытия
 var auto_close_timer: Timer
