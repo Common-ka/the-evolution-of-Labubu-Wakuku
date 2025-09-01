@@ -36,7 +36,7 @@ func _build_tabs() -> void:
 		var list := VBoxContainer.new()
 		list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		list.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		list.theme_override_constants.separation = 6
+		list.add_theme_constant_override("separation", 6)
 
 		var items := AchievementManager.get_achievements_by_category(category_id)
 		for a in items:

@@ -1,11 +1,11 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=2 format=3 uid="uid://cgekdbeghmw2"]
 
 [ext_resource type="Script" path="res://scripts/ui/achievement_item.gd" id="1"]
 
 [node name="AchievementItem" type="HBoxContainer"]
-layout_mode = 2
-theme_override_constants/separation = 8
+script = ExtResource("1")
 size_flags_horizontal = 3
+theme_override_constants/separation = 8
 
 [node name="Icon" type="Label" parent="."]
 layout_mode = 2
@@ -34,7 +34,6 @@ theme_override_constants/separation = 8
 layout_mode = 2
 size_flags_horizontal = 3
 max_value = 1.0
-value = 0.0
 
 [node name="ProgressText" type="Label" parent="Info/ProgressRow"]
 layout_mode = 2
@@ -49,5 +48,3 @@ layout_mode = 2
 text = "🔒"
 
 [connection signal="ready" from="." to="." method="_on_ready"]
-
-
