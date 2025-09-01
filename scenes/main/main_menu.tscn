@@ -54,6 +54,10 @@ text = "Начать игру"
 layout_mode = 2
 text = "Продолжить"
 
+[node name="AchievementsButton" type="Button" parent="ButtonsContainer"]
+layout_mode = 2
+text = "Достижения"
+
 [node name="SettingsButton" type="Button" parent="ButtonsContainer"]
 layout_mode = 2
 text = "Настройки"

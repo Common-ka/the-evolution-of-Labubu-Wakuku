@@ -5,6 +5,7 @@ extends Control
 # Ссылки на кнопки
 @onready var start_button: Button = $ButtonsContainer/StartButton
 @onready var continue_button: Button = $ButtonsContainer/ContinueButton
+@onready var achievements_button: Button = $ButtonsContainer/AchievementsButton
 @onready var settings_button: Button = $ButtonsContainer/SettingsButton
 @onready var quit_button: Button = $ButtonsContainer/QuitButton
 
@@ -12,6 +13,7 @@ func _ready() -> void:
 	# Подключение сигналов кнопок
 	start_button.pressed.connect(_on_start_button_pressed)
 	continue_button.pressed.connect(_on_continue_button_pressed)
+	achievements_button.pressed.connect(_on_achievements_button_pressed)
 	settings_button.pressed.connect(_on_settings_button_pressed)
 	quit_button.pressed.connect(_on_quit_button_pressed)
 	
@@ -37,6 +39,12 @@ func _on_continue_button_pressed() -> void:
 	
 	# Переходим к игровой сцене
 	change_scene_to_game()
+
+func _on_achievements_button_pressed() -> void:
+	print("Открываем панель достижений")
+	var panel = load("res://scenes/ui/achievement_panel.tscn").instantiate()
+	add_child(panel)
+	panel.show()
 
 # Обработка нажатия "Настройки"
 func _on_settings_button_pressed() -> void:
