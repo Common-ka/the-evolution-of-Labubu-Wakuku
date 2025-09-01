@@ -1,7 +1,7 @@
 extends Control
 
 # Скрипт для уведомлений о достижениях
-# Автоматически появляется и исчезает
+# Автоматически появляется и исчезает снизу экрана
 
 @onready var panel: Panel = $Panel
 @onready var icon_label: Label = $Panel/Margin/HBox/Icon
@@ -66,7 +66,7 @@ func show_achievement(achievement_id: String) -> void:
 
 # Анимация появления
 func _animate_in() -> void:
-	# Начальное состояние: скрыто и сдвинуто вниз
+	# Начальное состояние: скрыто и сдвинуто вниз (за пределами экрана)
 	modulate.a = 0.0
 	panel.position.y = SLIDE_DISTANCE
 	
@@ -79,7 +79,7 @@ func _animate_in() -> void:
 	
 	# Fade in
 	tween.tween_property(self, "modulate:a", 1.0, ANIMATION_DURATION)
-	# Slide up
+	# Slide up (из-за пределов экрана снизу в нормальное положение)
 	tween.tween_property(panel, "position:y", 0.0, ANIMATION_DURATION).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
 	
 	print("[AchievementPopup] Анимация появления запущена")
@@ -91,7 +91,7 @@ func _animate_out() -> void:
 	
 	# Fade out
 	tween.tween_property(self, "modulate:a", 0.0, ANIMATION_DURATION)
-	# Slide down
+	# Slide down (вниз за пределы экрана)
 	tween.tween_property(panel, "position:y", SLIDE_DISTANCE, ANIMATION_DURATION).set_ease(Tween.EASE_IN)
 	
 	# Скрываем после завершения анимации
