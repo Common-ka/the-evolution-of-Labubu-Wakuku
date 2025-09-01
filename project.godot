@@ -32,6 +32,7 @@ GameManager="*res://scripts/autoload/game_manager.gd"
 FloatingTextPool="*res://scripts/autoload/floating_text_pool.gd"
 ParticleManager="*res://scripts/autoload/particle_manager.gd"
 AchievementManager="*res://scripts/autoload/achievement_manager.gd"
+AchievementPopup="*res://scenes/ui/achievement_popup.tscn"
 
 [debug]
 
