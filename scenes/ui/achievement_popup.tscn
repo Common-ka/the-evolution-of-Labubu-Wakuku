@@ -1,0 +1,96 @@
+[gd_scene load_steps=3 format=3 uid="uid://bqxvhxqxqxqxs"]
+
+[ext_resource type="Script" path="res://scripts/ui/achievement_popup.gd" id="1_script"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1"]
+bg_color = Color(0.2, 0.2, 0.2, 0.95)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.8, 0, 1)
+
+[node name="AchievementPopup" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+script = ExtResource("1_script")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = -125.0
+offset_right = -16.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_1")
+
+[node name="Margin" type="MarginContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 12
+
+[node name="HBox" type="HBoxContainer" parent="Panel/Margin"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 16
+
+[node name="Icon" type="Label" parent="Panel/Margin/HBox"]
+layout_mode = 2
+text = "🏆"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 32
+
+[node name="VBox" type="VBoxContainer" parent="Panel/Margin/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 4
+
+[node name="Title" type="Label" parent="Panel/Margin/HBox/VBox"]
+layout_mode = 2
+text = "Достижение разблокировано!"
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(1, 0.8, 0, 1)
+
+[node name="AchievementName" type="Label" parent="Panel/Margin/HBox/VBox"]
+layout_mode = 2
+text = "Название достижения"
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+
+[node name="Description" type="Label" parent="Panel/Margin/HBox/VBox"]
+layout_mode = 2
+text = "Описание достижения"
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+autowrap_mode = 2
+
+[node name="Reward" type="Label" parent="Panel/Margin/HBox/VBox"]
+layout_mode = 2
+text = "Награда: +10 валюты"
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.2, 1, 0.2, 1)
+
