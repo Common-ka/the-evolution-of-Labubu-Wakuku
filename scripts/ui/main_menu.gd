@@ -19,6 +19,9 @@ func _ready() -> void:
 	
 	# Проверяем наличие сохранения для кнопки "Продолжить"
 	update_continue_button()
+	
+	# Обновляем текст кнопки звука при запуске
+	update_sound_button()
 
 # Обработка нажатия "Начать игру"
 func _on_start_button_pressed() -> void:
@@ -48,11 +51,12 @@ func _on_achievements_button_pressed() -> void:
 	if SoundManager:
 		SoundManager.play_ui("ui_open")
 
-# Обработка нажатия "Настройки"
+# Обработка нажатия кнопки звука (переключение)
 func _on_settings_button_pressed() -> void:
-	print("Открываем настройки")
-	# TODO: Реализовать открытие настроек
-	# EventBus.emit_signal("settings_requested")
+	if SoundManager:
+		var new_state = SoundManager.toggle_sound()
+		update_sound_button()
+		print("Звук переключен: ", "включен" if new_state else "выключен")
 
 # Обработка нажатия "Выход"
 func _on_quit_button_pressed() -> void:
@@ -73,3 +77,10 @@ func update_continue_button() -> void:
 	else:
 		continue_button.disabled = true
 		continue_button.text = "Нет сохранения"
+
+# Обновление текста кнопки звука
+func update_sound_button() -> void:
+	if SoundManager and SoundManager.get_sound_state():
+		settings_button.text = "🔊 Звук ВКЛ"
+	else:
+		settings_button.text = "🔇 Звук ВЫКЛ"

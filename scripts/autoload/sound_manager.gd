@@ -24,6 +24,9 @@ var last_played_ms: Dictionary = {}
 var sfx_pool: Array[AudioStreamPlayer] = []
 var ui_player: AudioStreamPlayer
 
+# Sound state
+var is_sound_enabled: bool = true
+
 # Settings
 const SFX_POOL_SIZE := 12
 const THROTTLE_MS := 50
@@ -32,6 +35,7 @@ func _ready() -> void:
 	_ensure_buses_exist()
 	_init_players()
 	_connect_signals()
+	_load_sound_state()
 
 func _ensure_buses_exist() -> void:
 	_ensure_bus(BUS_MUSIC)
@@ -138,3 +142,48 @@ func mute(bus: String, v: bool) -> void:
 	if idx == -1:
 		return
 	AudioServer.set_bus_mute(idx, v)
+
+# Sound control methods
+func toggle_sound() -> bool:
+	is_sound_enabled = !is_sound_enabled
+	_apply_sound_state()
+	_save_sound_state()
+	print("[SoundManager] Звук ", "включен" if is_sound_enabled else "выключен")
+	return is_sound_enabled
+
+func enable_sound() -> void:
+	is_sound_enabled = true
+	_apply_sound_state()
+	_save_sound_state()
+	print("[SoundManager] Звук включен")
+
+func disable_sound() -> void:
+	is_sound_enabled = false
+	_apply_sound_state()
+	_save_sound_state()
+	print("[SoundManager] Звук выключен")
+
+func _apply_sound_state() -> void:
+	# Mute/unmute all audio buses
+	mute(BUS_MUSIC, !is_sound_enabled)
+	mute(BUS_SFX, !is_sound_enabled)
+	mute(BUS_UI, !is_sound_enabled)
+
+func _save_sound_state() -> void:
+	var config = ConfigFile.new()
+	config.set_value("audio", "sound_enabled", is_sound_enabled)
+	config.save("user://sound_settings.cfg")
+
+func _load_sound_state() -> void:
+	var config = ConfigFile.new()
+	var err = config.load("user://sound_settings.cfg")
+	if err == OK:
+		is_sound_enabled = config.get_value("audio", "sound_enabled", true)
+	else:
+		is_sound_enabled = true  # По умолчанию звук включен
+	
+	_apply_sound_state()
+	print("[SoundManager] Состояние звука загружено: ", "включен" if is_sound_enabled else "выключен")
+
+func get_sound_state() -> bool:
+	return is_sound_enabled
