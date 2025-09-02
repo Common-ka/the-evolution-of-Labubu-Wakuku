@@ -18,10 +18,21 @@ func _ready() -> void:
 	# Подключаемся к сигналу tree_exiting для автоматической очистки
 	tree_exiting.connect(_on_tree_exiting)
 
-# Создает Tween для конкретного узла
+# Создает Tween для конкретного узла с дополнительными проверками
 func create_tween_for_node(node: Node) -> Tween:
+	# Проверяем валидность узла
 	if not is_instance_valid(node):
 		push_error("[TweenManager] Попытка создать Tween для невалидного узла")
+		return null
+	
+	# Проверяем, что узел находится в дереве сцены
+	if not node.is_inside_tree():
+		push_warning("[TweenManager] Узел не в дереве сцены: ", node.name)
+		return null
+	
+	# Проверяем, что узел не помечен на удаление
+	if node.is_queued_for_deletion():
+		push_warning("[TweenManager] Узел помечен на удаление: ", node.name)
 		return null
 	
 	var tween = node.create_tween()
@@ -50,6 +61,14 @@ func create_global_tween() -> Tween:
 	print("[TweenManager] Создан глобальный Tween")
 	tween_started.emit(tween, null)
 	
+	return tween
+
+# Безопасное создание Tween с отложенным запуском
+func create_delayed_tween_for_node(node: Node, delay: float = 0.1) -> Tween:
+	var tween = create_tween_for_node(node)
+	if tween:
+		# Добавляем небольшую задержку для стабилизации
+		tween.set_delay(delay)
 	return tween
 
 # Убивает все Tween'ы для конкретного узла
@@ -132,6 +151,18 @@ func get_total_tween_count() -> int:
 func has_node_tweens(node: Node) -> bool:
 	return node_tweens.has(node) and not node_tweens[node].is_empty()
 
+# Очистка невалидных узлов из словаря
+func cleanup_invalid_nodes() -> void:
+	var nodes_to_remove: Array[Node] = []
+	
+	for node in node_tweens.keys():
+		if not is_instance_valid(node) or node.is_queued_for_deletion():
+			nodes_to_remove.append(node)
+	
+	for node in nodes_to_remove:
+		node_tweens.erase(node)
+		print("[TweenManager] Убран невалидный узел: ", node.name if node else "null")
+
 # Обработчик завершения Tween'а
 func _on_tween_finished(tween: Tween, node: Node) -> void:
 	print("[TweenManager] Tween завершен для узла: ", node.name if node else "глобальный")
@@ -161,3 +192,9 @@ func _on_tree_exiting() -> void:
 # Очистка при уничтожении
 func _exit_tree() -> void:
 	kill_all_tweens()
+
+# Обработчик процесса для периодической очистки
+func _process(_delta: float) -> void:
+	# Периодически очищаем невалидные узлы
+	if Engine.get_process_frames() % 60 == 0:  # Каждую секунду при 60 FPS
+		cleanup_invalid_nodes()

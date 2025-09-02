@@ -1,26 +1,31 @@
+# Скрипт для кликабельного объекта (белый треугольник)
+# Обрабатывает клики и создает визуальные эффекты
+
 extends Area2D
 
-# Скрипт для обработки кликов на кликабельный объект
+signal click_performed
 
-# Константы анимации для легкой настройки
-const CLICK_SCALE_MAX := 1.3
-const CLICK_SCALE_MIN := 0.95
-const CLICK_ROTATION_MAX := 0.1
-const CLICK_ROTATION_MIN := -0.05
-const CLICK_PHASE1_TIME := 0.08
-const CLICK_PHASE2_TIME := 0.12
-const CLICK_PHASE3_TIME := 0.1
-const HOVER_SCALE := 1.05
-const HOVER_TIME := 0.15
-
-# Ссылки на узлы
+# Ссылка на спрайт треугольника
 @onready var triangle: Polygon2D = $Triangle
 
-# Анимация клика
+# Tween для анимации клика
 var click_tween: Tween
 
+# Константы анимации
+const CLICK_SCALE_MAX := 1.3
+const CLICK_SCALE_MIN := 0.8
+const CLICK_PHASE1_TIME := 0.1
+const CLICK_PHASE2_TIME := 0.15
+const CLICK_PHASE3_TIME := 0.2
+const CLICK_ROTATION_MAX := 0.3
+const CLICK_ROTATION_MIN := -0.2
+
+# Константы для эффекта наведения
+const HOVER_SCALE := 1.1
+const HOVER_TIME := 0.2
+
 func _ready() -> void:
-	# Подключение сигналов
+	# Подключаем сигналы
 	input_event.connect(_on_input_event)
 	mouse_entered.connect(_on_mouse_entered)
 	mouse_exited.connect(_on_mouse_exited)
@@ -84,11 +89,25 @@ func create_scale_animation() -> void:
 		print("[ClickableObject] Объект невалиден, пропускаем анимацию")
 		return
 	
+	# Дополнительные проверки безопасности
+	if not is_inside_tree():
+		print("[ClickableObject] Узел не в дереве сцены, пропускаем анимацию")
+		return
+	
+	if is_queued_for_deletion():
+		print("[ClickableObject] Узел помечен на удаление, пропускаем анимацию")
+		return
+	
 	# Останавливаем предыдущую анимацию если она есть
-	if click_tween:
+	if click_tween and is_instance_valid(click_tween):
 		click_tween.kill()
 	
-	click_tween = create_tween()
+	# Создаем Tween через TweenManager
+	click_tween = TweenManager.create_delayed_tween_for_node(self, 0.05)
+	if not click_tween:
+		print("[ClickableObject] Не удалось создать Tween, пропускаем анимацию")
+		return
+	
 	click_tween.set_parallel(true)
 	
 	# Фаза 1: Быстрое увеличение с ротацией
@@ -105,18 +124,27 @@ func create_scale_animation() -> void:
 
 # Создание улучшенного эффекта наведения
 func create_hover_effect() -> void:
+	# Проверяем валидность объекта
+	if not is_instance_valid(self) or not is_inside_tree() or is_queued_for_deletion():
+		return
+	
 	# Легкое увеличение масштаба при наведении с плавным переходом
-	var hover_tween = create_tween()
-	hover_tween.tween_property(self, "scale", Vector2(HOVER_SCALE, HOVER_SCALE), HOVER_TIME).set_ease(Tween.EASE_OUT)
+	var hover_tween = TweenManager.create_delayed_tween_for_node(self, 0.05)
+	if hover_tween:
+		hover_tween.tween_property(self, "scale", Vector2(HOVER_SCALE, HOVER_SCALE), HOVER_TIME).set_ease(Tween.EASE_OUT)
 
 # Убираем эффект наведения
 func remove_hover_effect() -> void:
+	# Проверяем валидность объекта
+	if not is_instance_valid(self) or not is_inside_tree() or is_queued_for_deletion():
+		return
+	
 	# Возвращаем к нормальному размеру с плавным переходом
-	var hover_tween = create_tween()
-	hover_tween.tween_property(self, "scale", Vector2(1.0, 1.0), HOVER_TIME).set_ease(Tween.EASE_OUT)
+	var hover_tween = TweenManager.create_delayed_tween_for_node(self, 0.05)
+	if hover_tween:
+		hover_tween.tween_property(self, "scale", Vector2(1.0, 1.0), HOVER_TIME).set_ease(Tween.EASE_OUT)
 
 # Очистка при уничтожении
 func _exit_tree() -> void:
-	# Останавливаем все активные Tween анимации
-	if click_tween:
-		click_tween.kill()
+	# TweenManager автоматически очистит все Tween'ы для этого узла
+	print("[ClickableObject] Очистка завершена")

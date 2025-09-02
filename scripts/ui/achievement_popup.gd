@@ -68,18 +68,28 @@ func _animate_in() -> void:
 		print("[AchievementPopup] Объект невалиден, пропускаем анимацию")
 		return
 	
+	# Дополнительные проверки безопасности
+	if not is_inside_tree():
+		print("[AchievementPopup] Узел не в дереве сцены, пропускаем анимацию")
+		return
+	
+	if is_queued_for_deletion():
+		print("[AchievementPopup] Узел помечен на удаление, пропускаем анимацию")
+		return
+	
 	# Начальное состояние: скрыто
 	modulate.a = 0.0
 	
 	# Показываем
 	show()
 	
-	# Анимация появления через TweenManager
-	var tween = TweenManager.create_tween_for_node(self)
+	# Анимация появления через TweenManager с отложенным запуском
+	var tween = TweenManager.create_delayed_tween_for_node(self, 0.05)
 	if tween:
 		tween.tween_property(self, "modulate:a", 1.0, ANIMATION_DURATION)
-	
-	print("[AchievementPopup] Анимация появления запущена")
+		print("[AchievementPopup] Анимация появления запущена")
+	else:
+		print("[AchievementPopup] Не удалось создать Tween для анимации появления")
 
 # Анимация исчезновения
 func _animate_out() -> void:
@@ -88,16 +98,29 @@ func _animate_out() -> void:
 		print("[AchievementPopup] Объект невалиден, пропускаем анимацию")
 		return
 	
-	# Анимация исчезновения через TweenManager
-	var tween = TweenManager.create_tween_for_node(self)
+	# Дополнительные проверки безопасности
+	if not is_inside_tree():
+		print("[AchievementPopup] Узел не в дереве сцены, пропускаем анимацию")
+		return
+	
+	if is_queued_for_deletion():
+		print("[AchievementPopup] Узел помечен на удаление, пропускаем анимацию")
+		return
+	
+	# Анимация исчезновения через TweenManager с отложенным запуском
+	var tween = TweenManager.create_delayed_tween_for_node(self, 0.05)
 	if tween:
 		# Fade out
 		tween.tween_property(self, "modulate:a", 0.0, ANIMATION_DURATION)
 		
 		# Скрываем после завершения анимации
 		tween.tween_callback(hide)
-	
-	print("[AchievementPopup] Анимация исчезновения запущена")
+		
+		print("[AchievementPopup] Анимация исчезновения запущена")
+	else:
+		print("[AchievementPopup] Не удалось создать Tween для анимации исчезновения")
+		# Fallback: скрываем сразу
+		hide()
 
 # Автоматическое закрытие по таймеру
 func _on_auto_close_timer_timeout() -> void:

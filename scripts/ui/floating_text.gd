@@ -6,7 +6,6 @@ extends Control
 signal animation_finished(text: Control)
 
 @onready var label: Label = $Label
-var tween: Tween
 
 # Константы анимации
 const ANIMATION_DURATION := 1.5
@@ -51,11 +50,21 @@ func _start_animation() -> void:
 		print("[FloatingText] Объект невалиден, пропускаем анимацию")
 		return
 	
-	# Останавливаем предыдущую анимацию если есть
-	if tween:
-		tween.kill()
+	# Дополнительные проверки безопасности
+	if not is_inside_tree():
+		print("[FloatingText] Узел не в дереве сцены, пропускаем анимацию")
+		return
 	
-	tween = create_tween()
+	if is_queued_for_deletion():
+		print("[FloatingText] Узел помечен на удаление, пропускаем анимацию")
+		return
+	
+	# Создаем Tween через TweenManager с отложенным запуском
+	var tween = TweenManager.create_delayed_tween_for_node(self, 0.05)
+	if not tween:
+		print("[FloatingText] Не удалось создать Tween, пропускаем анимацию")
+		return
+	
 	tween.set_parallel(true)
 	
 	# Движение вверх
@@ -70,6 +79,8 @@ func _start_animation() -> void:
 	
 	# Завершение анимации
 	tween.tween_callback(_on_animation_complete).set_delay(ANIMATION_DURATION)
+	
+	print("[FloatingText] Анимация запущена для значения: ", label.text)
 
 # Обработчик завершения анимации
 func _on_animation_complete() -> void:
