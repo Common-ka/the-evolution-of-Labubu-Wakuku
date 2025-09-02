@@ -79,6 +79,11 @@ func create_particle_effect() -> void:
 
 # Создание улучшенной анимации масштабирования и ротации
 func create_scale_animation() -> void:
+	# Проверяем валидность объекта
+	if not is_instance_valid(self):
+		print("[ClickableObject] Объект невалиден, пропускаем анимацию")
+		return
+	
 	# Останавливаем предыдущую анимацию если она есть
 	if click_tween:
 		click_tween.kill()
@@ -109,3 +114,9 @@ func remove_hover_effect() -> void:
 	# Возвращаем к нормальному размеру с плавным переходом
 	var hover_tween = create_tween()
 	hover_tween.tween_property(self, "scale", Vector2(1.0, 1.0), HOVER_TIME).set_ease(Tween.EASE_OUT)
+
+# Очистка при уничтожении
+func _exit_tree() -> void:
+	# Останавливаем все активные Tween анимации
+	if click_tween:
+		click_tween.kill()

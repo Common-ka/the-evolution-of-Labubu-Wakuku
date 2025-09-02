@@ -1,28 +1,26 @@
+# Скрипт для попапа достижений
+# Показывает уведомления о разблокированных достижениях
+
 extends Control
 
-# Скрипт для уведомлений о достижениях
-# Автоматически появляется и исчезает снизу экрана
+signal achievement_shown(achievement_id: String)
 
 @onready var panel: Panel = $Panel
 @onready var icon_label: Label = $Panel/Margin/HBox/Icon
-@onready var title_label: Label = $Panel/Margin/HBox/VBox/Title
 @onready var name_label: Label = $Panel/Margin/HBox/VBox/AchievementName
 @onready var description_label: Label = $Panel/Margin/HBox/VBox/Description
 @onready var reward_label: Label = $Panel/Margin/HBox/VBox/Reward
+@onready var auto_close_timer: Timer = Timer.new()
 
-# Настройки анимации
-const ANIMATION_DURATION: float = 0.3
-const DISPLAY_DURATION: float = 4.0
-
-# Таймер для автоматического закрытия
-var auto_close_timer: Timer
+# Константы анимации
+const ANIMATION_DURATION := 0.5
+const DISPLAY_DURATION := 3.0
 
 func _ready() -> void:
 	# Подключаемся к EventBus для получения уведомлений о достижениях
 	EventBus.achievement_condition_met.connect(_on_achievement_unlocked)
 	
-	# Создаем таймер для автоматического закрытия
-	auto_close_timer = Timer.new()
+	# Настройка таймера
 	auto_close_timer.one_shot = true
 	auto_close_timer.timeout.connect(_on_auto_close_timer_timeout)
 	add_child(auto_close_timer)
@@ -65,27 +63,39 @@ func show_achievement(achievement_id: String) -> void:
 
 # Анимация появления
 func _animate_in() -> void:
+	# Проверяем валидность объекта
+	if not is_instance_valid(self):
+		print("[AchievementPopup] Объект невалиден, пропускаем анимацию")
+		return
+	
 	# Начальное состояние: скрыто
 	modulate.a = 0.0
 	
 	# Показываем
 	show()
 	
-	# Анимация появления - только fade in
-	var tween = create_tween()
-	tween.tween_property(self, "modulate:a", 1.0, ANIMATION_DURATION)
+	# Анимация появления через TweenManager
+	var tween = TweenManager.create_tween_for_node(self)
+	if tween:
+		tween.tween_property(self, "modulate:a", 1.0, ANIMATION_DURATION)
 	
 	print("[AchievementPopup] Анимация появления запущена")
 
 # Анимация исчезновения
 func _animate_out() -> void:
-	var tween = create_tween()
+	# Проверяем валидность объекта
+	if not is_instance_valid(self):
+		print("[AchievementPopup] Объект невалиден, пропускаем анимацию")
+		return
 	
-	# Fade out
-	tween.tween_property(self, "modulate:a", 0.0, ANIMATION_DURATION)
-	
-	# Скрываем после завершения анимации
-	tween.tween_callback(hide)
+	# Анимация исчезновения через TweenManager
+	var tween = TweenManager.create_tween_for_node(self)
+	if tween:
+		# Fade out
+		tween.tween_property(self, "modulate:a", 0.0, ANIMATION_DURATION)
+		
+		# Скрываем после завершения анимации
+		tween.tween_callback(hide)
 	
 	print("[AchievementPopup] Анимация исчезновения запущена")
 
@@ -105,5 +115,9 @@ func close() -> void:
 
 # Очистка при уничтожении
 func _exit_tree() -> void:
+	# Останавливаем таймер
 	if auto_close_timer:
 		auto_close_timer.queue_free()
+	
+	# TweenManager автоматически очистит все Tween'ы для этого узла
+	print("[AchievementPopup] Очистка завершена")

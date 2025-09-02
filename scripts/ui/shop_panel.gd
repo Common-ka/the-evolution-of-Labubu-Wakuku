@@ -80,6 +80,11 @@ func _prepare_initial_state() -> void:
 	animate_show()
 
 func animate_show() -> void:
+	# Проверяем валидность объектов
+	if not is_instance_valid(self) or not is_instance_valid(overlay) or not is_instance_valid(panel):
+		print("[ShopPanel] Объекты невалидны, пропускаем анимацию показа")
+		return
+	
 	if _hide_tween:
 		_hide_tween.kill()
 	if _show_tween:
@@ -91,6 +96,11 @@ func animate_show() -> void:
 	_show_tween.tween_property(panel, "scale", Vector2(1, 1), SHOW_DURATION).set_ease(Tween.EASE_OUT)
 
 func animate_hide() -> void:
+	# Проверяем валидность объектов
+	if not is_instance_valid(self) or not is_instance_valid(overlay) or not is_instance_valid(panel):
+		print("[ShopPanel] Объекты невалидны, пропускаем анимацию скрытия")
+		return
+	
 	if _show_tween:
 		_show_tween.kill()
 	if _hide_tween:
@@ -466,3 +476,11 @@ func _on_button_released_visual(button: Button) -> void:
 	
 	var tween = create_tween()
 	tween.tween_property(button, "scale", Vector2(BUTTON_HOVER_SCALE, BUTTON_HOVER_SCALE), BUTTON_ANIM_DURATION * 0.5).set_ease(Tween.EASE_OUT)
+
+# Очистка при уничтожении
+func _exit_tree() -> void:
+	# Останавливаем все активные Tween анимации
+	if _show_tween:
+		_show_tween.kill()
+	if _hide_tween:
+		_hide_tween.kill()

@@ -46,6 +46,11 @@ func show_value(value: int, start_position: Vector2) -> void:
 
 # Запуск анимации
 func _start_animation() -> void:
+	# Проверяем валидность объекта
+	if not is_instance_valid(self):
+		print("[FloatingText] Объект невалиден, пропускаем анимацию")
+		return
+	
 	# Останавливаем предыдущую анимацию если есть
 	if tween:
 		tween.kill()
