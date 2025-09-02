@@ -24,6 +24,9 @@ func _ready() -> void:
 
 # Создание эффекта клика (с ограничением производительности)
 func create_click_effect(position: Vector2) -> void:
+	# Очищаем невалидные эффекты из активных
+	_cleanup_invalid_effects()
+	
 	# Проверяем лимит активных эффектов
 	if active_effects.size() >= MAX_ACTIVE_EFFECTS:
 		# Если лимит достигнут, заменяем самый старый эффект
@@ -62,11 +65,19 @@ func _replace_oldest_effect(new_position: Vector2) -> void:
 	# Находим самый старый эффект (первый в массиве)
 	var oldest_effect = active_effects[0]
 	
+	# Проверяем валидность эффекта перед обработкой
+	if not is_instance_valid(oldest_effect):
+		print("[ParticleManager] Обнаружен невалидный эффект, пропускаем")
+		active_effects.remove_at(0)
+		create_click_effect(new_position)
+		return
+	
 	# Убираем его из активных
 	active_effects.remove_at(0)
 	
-	# Возвращаем в пул
-	return_effect_to_pool(oldest_effect)
+	# Возвращаем в пул только если эффект валиден
+	if is_instance_valid(oldest_effect):
+		return_effect_to_pool(oldest_effect)
 	
 	# Создаем новый эффект на том же месте
 	create_click_effect(new_position)
@@ -87,10 +98,19 @@ func _get_effect_from_pool() -> Node2D:
 
 # Обработчик завершения эффекта
 func _on_effect_finished(effect: Node2D) -> void:
-	return_effect_to_pool(effect)
+	# Проверяем валидность эффекта перед возвратом в пул
+	if is_instance_valid(effect):
+		return_effect_to_pool(effect)
+	else:
+		print("[ParticleManager] Эффект уже невалиден в _on_effect_finished")
 
 # Возврат эффекта в пул
 func return_effect_to_pool(effect: Node2D) -> void:
+	# Проверяем валидность эффекта
+	if not is_instance_valid(effect):
+		print("[ParticleManager] Попытка вернуть невалидный эффект в пул")
+		return
+	
 	# Убираем из активных
 	active_effects.erase(effect)
 	
@@ -142,3 +162,13 @@ func force_cleanup() -> void:
 	
 	# Пересоздаем базовый пул
 	_prepopulate_pool()
+
+# Очистка невалидных эффектов из активного списка
+func _cleanup_invalid_effects() -> void:
+	var i := 0
+	while i < active_effects.size():
+		if not is_instance_valid(active_effects[i]):
+			print("[ParticleManager] Удаляем невалидный эффект из активных")
+			active_effects.remove_at(i)
+		else:
+			i += 1
