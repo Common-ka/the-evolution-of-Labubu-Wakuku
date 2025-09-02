@@ -33,6 +33,7 @@ FloatingTextPool="*res://scripts/autoload/floating_text_pool.gd"
 ParticleManager="*res://scripts/autoload/particle_manager.gd"
 AchievementManager="*res://scripts/autoload/achievement_manager.gd"
 AchievementPopup="*res://scenes/ui/achievement_popup.tscn"
+SoundManager="*res://scripts/autoload/sound_manager.gd"
 
 [debug]
 

@@ -45,6 +45,8 @@ func _on_achievements_button_pressed() -> void:
 	var panel = load("res://scenes/ui/achievement_panel.tscn").instantiate()
 	add_child(panel)
 	panel.show()
+	if SoundManager:
+		SoundManager.play_ui("ui_open")
 
 # Обработка нажатия "Настройки"
 func _on_settings_button_pressed() -> void:

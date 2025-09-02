@@ -54,6 +54,8 @@ func _on_shop_button_pressed() -> void:
 	var shop_scene: PackedScene = load("res://scenes/ui/shop_panel.tscn")
 	var shop: Control = shop_scene.instantiate()
 	$UI.add_child(shop)
+	if SoundManager:
+		SoundManager.play_ui("ui_open")
 
 # Обновление отображения валюты
 func update_currency_display() -> void:
