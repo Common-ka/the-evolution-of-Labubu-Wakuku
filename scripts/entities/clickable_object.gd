@@ -110,17 +110,18 @@ func create_scale_animation() -> void:
 	
 	click_tween.set_parallel(true)
 	
+	# В Godot 4 задержка устанавливается на Tweener'е
 	# Фаза 1: Быстрое увеличение с ротацией
-	click_tween.tween_property(self, "scale", Vector2(CLICK_SCALE_MAX, CLICK_SCALE_MAX), CLICK_PHASE1_TIME).set_ease(Tween.EASE_OUT)
-	click_tween.tween_property(self, "rotation", CLICK_ROTATION_MAX, CLICK_PHASE1_TIME).set_ease(Tween.EASE_OUT)
+	click_tween.tween_property(self, "scale", Vector2(CLICK_SCALE_MAX, CLICK_SCALE_MAX), CLICK_PHASE1_TIME).set_delay(0.05).set_ease(Tween.EASE_OUT)
+	click_tween.tween_property(self, "rotation", CLICK_ROTATION_MAX, CLICK_PHASE1_TIME).set_delay(0.05).set_ease(Tween.EASE_OUT)
 	
 	# Фаза 2: Сжатие с обратной ротацией (эффект "отскока")
-	click_tween.tween_property(self, "scale", Vector2(CLICK_SCALE_MIN, CLICK_SCALE_MIN), CLICK_PHASE2_TIME).set_delay(CLICK_PHASE1_TIME).set_ease(Tween.EASE_IN_OUT)
-	click_tween.tween_property(self, "rotation", CLICK_ROTATION_MIN, CLICK_PHASE2_TIME).set_delay(CLICK_PHASE1_TIME).set_ease(Tween.EASE_IN_OUT)
+	click_tween.tween_property(self, "scale", Vector2(CLICK_SCALE_MIN, CLICK_SCALE_MIN), CLICK_PHASE2_TIME).set_delay(0.05 + CLICK_PHASE1_TIME).set_ease(Tween.EASE_IN_OUT)
+	click_tween.tween_property(self, "rotation", CLICK_ROTATION_MIN, CLICK_PHASE2_TIME).set_delay(0.05 + CLICK_PHASE1_TIME).set_ease(Tween.EASE_IN_OUT)
 	
 	# Фаза 3: Возврат к нормальному состоянию
-	click_tween.tween_property(self, "scale", Vector2(1.0, 1.0), CLICK_PHASE3_TIME).set_delay(CLICK_PHASE1_TIME + CLICK_PHASE2_TIME).set_ease(Tween.EASE_OUT)
-	click_tween.tween_property(self, "rotation", 0.0, CLICK_PHASE3_TIME).set_delay(CLICK_PHASE1_TIME + CLICK_PHASE2_TIME).set_ease(Tween.EASE_OUT)
+	click_tween.tween_property(self, "scale", Vector2(1.0, 1.0), CLICK_PHASE3_TIME).set_delay(0.05 + CLICK_PHASE1_TIME + CLICK_PHASE2_TIME).set_ease(Tween.EASE_OUT)
+	click_tween.tween_property(self, "rotation", 0.0, CLICK_PHASE3_TIME).set_delay(0.05 + CLICK_PHASE1_TIME + CLICK_PHASE2_TIME).set_ease(Tween.EASE_OUT)
 
 # Создание улучшенного эффекта наведения
 func create_hover_effect() -> void:
@@ -131,7 +132,8 @@ func create_hover_effect() -> void:
 	# Легкое увеличение масштаба при наведении с плавным переходом
 	var hover_tween = TweenManager.create_delayed_tween_for_node(self, 0.05)
 	if hover_tween:
-		hover_tween.tween_property(self, "scale", Vector2(HOVER_SCALE, HOVER_SCALE), HOVER_TIME).set_ease(Tween.EASE_OUT)
+		# В Godot 4 задержка устанавливается на Tweener'е
+		hover_tween.tween_property(self, "scale", Vector2(HOVER_SCALE, HOVER_SCALE), HOVER_TIME).set_delay(0.05).set_ease(Tween.EASE_OUT)
 
 # Убираем эффект наведения
 func remove_hover_effect() -> void:
@@ -142,7 +144,8 @@ func remove_hover_effect() -> void:
 	# Возвращаем к нормальному размеру с плавным переходом
 	var hover_tween = TweenManager.create_delayed_tween_for_node(self, 0.05)
 	if hover_tween:
-		hover_tween.tween_property(self, "scale", Vector2(1.0, 1.0), HOVER_TIME).set_ease(Tween.EASE_OUT)
+		# В Godot 4 задержка устанавливается на Tweener'е
+		hover_tween.tween_property(self, "scale", Vector2(1.0, 1.0), HOVER_TIME).set_delay(0.05).set_ease(Tween.EASE_OUT)
 
 # Очистка при уничтожении
 func _exit_tree() -> void:

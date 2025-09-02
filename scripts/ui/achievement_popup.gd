@@ -86,7 +86,8 @@ func _animate_in() -> void:
 	# Анимация появления через TweenManager с отложенным запуском
 	var tween = TweenManager.create_delayed_tween_for_node(self, 0.05)
 	if tween:
-		tween.tween_property(self, "modulate:a", 1.0, ANIMATION_DURATION)
+		# В Godot 4 задержка устанавливается на Tweener'е
+		tween.tween_property(self, "modulate:a", 1.0, ANIMATION_DURATION).set_delay(0.05)
 		print("[AchievementPopup] Анимация появления запущена")
 	else:
 		print("[AchievementPopup] Не удалось создать Tween для анимации появления")
@@ -110,8 +111,8 @@ func _animate_out() -> void:
 	# Анимация исчезновения через TweenManager с отложенным запуском
 	var tween = TweenManager.create_delayed_tween_for_node(self, 0.05)
 	if tween:
-		# Fade out
-		tween.tween_property(self, "modulate:a", 0.0, ANIMATION_DURATION)
+		# В Godot 4 задержка устанавливается на Tweener'е
+		tween.tween_property(self, "modulate:a", 0.0, ANIMATION_DURATION).set_delay(0.05)
 		
 		# Скрываем после завершения анимации
 		tween.tween_callback(hide)

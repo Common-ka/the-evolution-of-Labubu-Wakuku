@@ -67,8 +67,9 @@ func create_global_tween() -> Tween:
 func create_delayed_tween_for_node(node: Node, delay: float = 0.1) -> Tween:
 	var tween = create_tween_for_node(node)
 	if tween:
-		# Добавляем небольшую задержку для стабилизации
-		tween.set_delay(delay)
+		# В Godot 4 задержка устанавливается на уровне Tweener'а, а не Tween'а
+		# Поэтому просто возвращаем Tween - задержку нужно устанавливать при создании Tweener'ов
+		print("[TweenManager] Создан Tween с возможностью отложенного запуска для узла: ", node.name)
 	return tween
 
 # Убивает все Tween'ы для конкретного узла
