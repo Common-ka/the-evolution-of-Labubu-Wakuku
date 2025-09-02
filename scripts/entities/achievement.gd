@@ -28,6 +28,9 @@ func update_progress(new_progress: int) -> bool:
 	return false
 
 func unlock() -> void:
+	if is_unlocked:
+		return  # Уже разблокировано, не эмитим сигнал повторно
+	
 	is_unlocked = true
 	EventBus.emit_signal("achievement_unlocked", id)
 	print("[Achievement] Разблокировано достижение: ", name, " (", id, ")")

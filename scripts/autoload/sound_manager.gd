@@ -72,6 +72,7 @@ func _on_upgrade_purchased(_upgrade_id: String) -> void:
 	play_sfx("buy_success")
 
 func _on_achievement_unlocked(_achievement_id: String) -> void:
+	print("[SoundManager] Воспроизводим звук достижения для: ", _achievement_id)
 	play_sfx("achievement_unlock", 0.0, 1.0)
 
 func play_ui(name: String) -> void:

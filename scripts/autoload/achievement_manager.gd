@@ -72,8 +72,11 @@ func _check_achievement_condition(achievement: Achievement) -> void:
 
 # Обработка выдачи наград и фиксация анлоков
 func _on_achievement_unlocked(achievement_id: String) -> void:
+	print("[AchievementManager] Получен сигнал achievement_unlocked для: ", achievement_id)
+	
 	# Исключаем повторную выдачу
 	if unlocked_achievements.has(achievement_id):
+		print("[AchievementManager] Достижение уже разблокировано, пропускаем: ", achievement_id)
 		return
 
 	var a: Achievement = achievements.get(achievement_id, null)
