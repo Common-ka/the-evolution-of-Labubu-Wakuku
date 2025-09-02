@@ -28,26 +28,37 @@ func _build_tabs() -> void:
 	for category_id in categories:
 		var tab := Control.new()
 		tab.name = category_id
+		# Вкладка должна растягиваться внутри TabContainer
+		tab.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		tab.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		tab.set_anchors_preset(Control.PRESET_FULL_RECT)
 
 		var scroll := ScrollContainer.new()
 		scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		scroll.set_anchors_preset(Control.PRESET_FULL_RECT)
 
 		var list := VBoxContainer.new()
 		list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		list.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		list.set_anchors_preset(Control.PRESET_FULL_RECT)
 		list.add_theme_constant_override("separation", 6)
 
 		var items := AchievementManager.get_achievements_by_category(category_id)
+		print("[AchievementPanel] Категория %s: найдено %d достижений" % [category_id, items.size()])
 		for a in items:
-			var item: AchievementItem = item_scene.instantiate()
+			print("[AchievementPanel] Создаю элемент для достижения: %s" % a.name)
+			var item: AchievementListItem = item_scene.instantiate()
 			list.add_child(item)
 			item.setup(a)
+			print("[AchievementPanel] Элемент добавлен в список")
 
 		scroll.add_child(list)
 		tab.add_child(scroll)
 		tab_container.add_child(tab)
-		tab_container.set_tab_title(tab_container.get_tab_count() - 1, _get_category_title(category_id))
+		var title = _get_category_title(category_id)
+		var count = items.size()
+		tab_container.set_tab_title(tab_container.get_tab_count() - 1, "%s (%d)" % [title, count])
 
 func _get_category_title(category_id: String) -> String:
 	match category_id:
@@ -65,6 +76,7 @@ func _get_category_title(category_id: String) -> String:
 func _update_summary() -> void:
 	var unlocked := AchievementManager.get_unlocked_count()
 	var total := AchievementManager.get_total_count()
-	progress_label.text = "Прогресс: %d / %d" % [unlocked, total]
+	var percentage := (float(unlocked) / float(total)) * 100.0 if total > 0 else 0.0
+	progress_label.text = "Прогресс: %d / %d (%.1f%%)" % [unlocked, total, percentage]
 	progress_bar.max_value = max(1, total)
 	progress_bar.value = unlocked
