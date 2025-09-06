@@ -8,6 +8,9 @@ var categories: Dictionary = {}
 var current_category: String = ""
 var active_tab_index: int = 0  # Сохраняем активную вкладку
 
+# Словарь для хранения ссылок на вкладки
+var tabs_by_id: Dictionary = {}
+
 # @onready var upgrade_stats_container: VBoxContainer = $Panel/Margin/VBox/TabContainer/Апгрейды/UpgradeStats/VBoxContainer
 @onready var close_button: Button = $Panel/Margin/VBox/CloseButton
 @onready var overlay: ColorRect = $Overlay
@@ -41,6 +44,12 @@ func _ready() -> void:
 	_setup_categories()
 	_render_items()
 	# _render_upgrade_stats()
+	
+	# Логируем информацию о вкладках
+	call_deferred("_log_tabs_info")
+	
+	# Настраиваем подсветки для новых вкладок
+	call_deferred("_setup_highlights")
 
 func _on_close_pressed() -> void:
 	animate_hide()
@@ -61,6 +70,13 @@ func _on_tab_changed(tab: int) -> void:
 	if not current_tab.has_meta("list_container") or not current_tab.has_meta("category_id"):
 		print("[ShopPanel] _on_tab_changed: у вкладки отсутствуют необходимые мета-данные: ", current_tab.name)
 		return
+	
+	# Получаем ID категории для текущей вкладки
+	var category_id = current_tab.get_meta("category_id", "")
+	if not category_id.is_empty():
+		# Отмечаем вкладку как нажатую
+		ClickTracker.mark_as_clicked(category_id)
+		print("[ShopPanel] Вкладка отмечена как нажатая: ", category_id)
 	
 	# Обновляем содержимое при смене вкладки
 	# if tab == tab_container.get_tab_count() - 1: # Последняя вкладка - "Апгрейды"
@@ -214,6 +230,9 @@ func _create_category_tab(category_id: String) -> void:
 	# Сохраняем ссылку на контейнер для рендеринга
 	tab_container_node.set_meta("list_container", vbox_container)
 	tab_container_node.set_meta("category_id", category_id)
+	
+	# Сохраняем ссылку на вкладку для доступа
+	tabs_by_id[category_id] = tab_container_node
 	
 	# Проверяем, что мета-данные установлены корректно
 	print("[ShopPanel] Проверка мета-данных для вкладки: ", category_id)
@@ -477,6 +496,57 @@ func _on_button_released_visual(button: Button) -> void:
 	var tween = create_tween()
 	tween.tween_property(button, "scale", Vector2(BUTTON_HOVER_SCALE, BUTTON_HOVER_SCALE), BUTTON_ANIM_DURATION * 0.5).set_ease(Tween.EASE_OUT)
 
+# Методы доступа к вкладкам
+func get_tab_by_id(tab_id: String) -> Control:
+	return tabs_by_id.get(tab_id, null)
+
+func get_all_tabs() -> Array[Control]:
+	return tabs_by_id.values()
+
+func get_tab_info() -> Dictionary:
+	var info = {}
+	for tab_id in tabs_by_id.keys():
+		var tab = tabs_by_id[tab_id]
+		var icon = categories[tab_id].get("icon", "📦")
+		var name = categories[tab_id].get("name", tab_id)
+		info[tab_id] = {"tab": tab, "icon": icon, "name": name}
+	return info
+
+# Логирование информации о вкладках
+func _log_tabs_info() -> void:
+	print("[ShopPanel] Найдены вкладки:")
+	for tab_id in tabs_by_id.keys():
+		var tab = tabs_by_id[tab_id]
+		var icon = categories[tab_id].get("icon", "📦")
+		var name = categories[tab_id].get("name", tab_id)
+		print("[ShopPanel] - %s (%s): %s" % [tab_id, icon, name])
+	
+	# Проверяем наличие нужных вкладок
+	var target_tabs = ["auto_click_upgrades", "multiplier_upgrades"]
+	for target_tab in target_tabs:
+		if tabs_by_id.has(target_tab):
+			print("[ShopPanel] ✅ Найдена целевая вкладка: %s" % target_tab)
+		else:
+			print("[ShopPanel] ❌ Целевая вкладка не найдена: %s" % target_tab)
+
+# Настройка подсветок для новых вкладок
+func _setup_highlights() -> void:
+	print("[ShopPanel] Настройка подсветок для вкладок")
+	
+	# Целевые вкладки для подсветки
+	var target_tabs = ["auto_click_upgrades", "multiplier_upgrades"]
+	
+	for tab_id in target_tabs:
+		if tabs_by_id.has(tab_id):
+			var tab_control = tabs_by_id[tab_id]
+			if is_instance_valid(tab_control):
+				print("[ShopPanel] Настраиваем подсветку для вкладки: ", tab_id)
+				ClickTracker.highlight_tab_with_pulse(tab_control, tab_id)
+			else:
+				print("[ShopPanel] Вкладка невалидна: ", tab_id)
+		else:
+			print("[ShopPanel] Вкладка не найдена: ", tab_id)
+
 # Очистка при уничтожении
 func _exit_tree() -> void:
 	# Останавливаем все активные Tween анимации
@@ -484,3 +554,6 @@ func _exit_tree() -> void:
 		_show_tween.kill()
 	if _hide_tween:
 		_hide_tween.kill()
+	
+	# Останавливаем все подсветки
+	ClickTracker.stop_all_highlights()

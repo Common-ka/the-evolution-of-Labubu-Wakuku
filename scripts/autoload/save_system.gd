@@ -46,6 +46,10 @@ func save_game() -> void:
 	if AchievementManager:
 		save_data["achievements"] = AchievementManager.get_save_data()
 	
+	# Добавляем данные отслеживания кликов
+	if ClickTracker:
+		save_data["clicked_elements"] = ClickTracker.get_save_data()
+	
 	var json_string: String = JSON.stringify(save_data)
 	var file: FileAccess = FileAccess.open(SAVE_FILE_PATH, FileAccess.WRITE)
 	
@@ -94,6 +98,10 @@ func load_game() -> void:
 			# Загрузка данных достижений
 			if save_data.has("achievements") and AchievementManager:
 				AchievementManager.load_save_data(save_data.achievements)
+			
+			# Загрузка данных отслеживания кликов
+			if save_data.has("clicked_elements") and ClickTracker:
+				ClickTracker.load_save_data(save_data.clicked_elements)
 			
 			print("Игра загружена успешно")
 			EventBus.emit_signal("load_completed")

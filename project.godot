@@ -35,6 +35,7 @@ AchievementManager="*res://scripts/autoload/achievement_manager.gd"
 AchievementPopup="*res://scenes/ui/achievement_popup.tscn"
 SoundManager="*res://scripts/autoload/sound_manager.gd"
 TweenManager="*res://scripts/autoload/tween_manager.gd"
+ClickTracker="*res://scripts/autoload/click_tracker.gd"
 
 [debug]
 

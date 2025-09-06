@@ -17,6 +17,7 @@ signal menu_requested
 signal settings_requested
 signal start_game_requested
 signal continue_game_requested
+signal element_clicked(element_id: String)
 
 # Сохранение
 signal save_requested
