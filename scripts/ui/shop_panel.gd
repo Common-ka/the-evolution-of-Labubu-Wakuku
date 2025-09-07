@@ -49,7 +49,7 @@ func _ready() -> void:
 	call_deferred("_log_tabs_info")
 	
 	# Настраиваем подсветки для новых вкладок
-	call_deferred("_setup_highlights")
+	# call_deferred("_setup_highlights")  # Отключено - убираем подсветку текста
 
 func _on_close_pressed() -> void:
 	animate_hide()
@@ -75,7 +75,7 @@ func _on_tab_changed(tab: int) -> void:
 	var category_id = current_tab.get_meta("category_id", "")
 	if not category_id.is_empty():
 		# Отмечаем вкладку как нажатую
-		ClickTracker.mark_as_clicked(category_id)
+		# ClickTracker.mark_as_clicked(category_id)  # Отключено - убираем подсветку
 		print("[ShopPanel] Вкладка отмечена как нажатая: ", category_id)
 	
 	# Обновляем содержимое при смене вкладки
@@ -556,4 +556,4 @@ func _exit_tree() -> void:
 		_hide_tween.kill()
 	
 	# Останавливаем все подсветки
-	ClickTracker.stop_all_highlights()
+	# ClickTracker.stop_all_highlights()  # Отключено - убираем подсветку
