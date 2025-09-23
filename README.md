@@ -70,8 +70,3 @@ The project is ready for export to:
 - [x] AchievementManager (autoload): reward handling, duplicate protection  
 - [x] Achievement integration with saves and GameManager  
 - [x] AchievementPopup scene: compact bottom-screen achievement notifications  
-
----
-
-## 🚧 Current Status: Development Paused
-The project is currently on hold.
