@@ -154,23 +154,43 @@ func has_node_tweens(node: Node) -> bool:
 
 # Очистка невалидных узлов из словаря
 func cleanup_invalid_nodes() -> void:
-	var nodes_to_remove: Array[Node] = []
+	var nodes_to_remove: Array = []  # Изменено с Array[Node] на Array для безопасности
 	
+	# Собираем невалидные узлы
 	for node in node_tweens.keys():
 		if not is_instance_valid(node) or node.is_queued_for_deletion():
 			nodes_to_remove.append(node)
 	
+	# Удаляем невалидные узлы из словаря
 	for node in nodes_to_remove:
+		# Сохраняем имя узла до удаления для логирования
+		var node_name: String = "null"
+		if is_instance_valid(node):
+			node_name = node.name
+		
+		# Убиваем все Tween'ы узла перед удалением
+		if node_tweens.has(node):
+			var tweens = node_tweens[node]
+			for tween in tweens:
+				if is_instance_valid(tween):
+					tween.kill()
+					tween_killed.emit(tween, node)
+		
 		node_tweens.erase(node)
-		print("[TweenManager] Убран невалидный узел: ", node.name if node else "null")
+		print("[TweenManager] Убран невалидный узел: ", node_name)
 
 # Обработчик завершения Tween'а
 func _on_tween_finished(tween: Tween, node: Node) -> void:
-	print("[TweenManager] Tween завершен для узла: ", node.name if node else "глобальный")
+	# Безопасная проверка узла перед логированием
+	var node_name: String = "глобальный"
+	if node and is_instance_valid(node):
+		node_name = node.name
+	
+	print("[TweenManager] Tween завершен для узла: ", node_name)
 	tween_finished.emit(tween, node)
 	
 	# Убираем завершенный Tween из списков
-	if node:
+	if node and is_instance_valid(node):
 		if node_tweens.has(node):
 			var tweens = node_tweens[node]
 			var index = tweens.find(tween)

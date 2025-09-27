@@ -48,7 +48,7 @@ grow_vertical = 2
 
 [node name="StartButton" type="Button" parent="ButtonsContainer"]
 layout_mode = 2
-text = "Начать игру"
+text = "Начать новую игру"
 
 [node name="ContinueButton" type="Button" parent="ButtonsContainer"]
 layout_mode = 2
