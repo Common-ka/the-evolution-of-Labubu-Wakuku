@@ -8,7 +8,7 @@ const BUS_UI := "ui"
 
 # Maps for known sounds (graceful fallback if files are missing)
 const SFX: Dictionary = {
-	"click": "res://assets/audio/sfx/click.ogg",
+	"click": "res://assets/audio/sfx/new_click.ogg",
 	"buy_success": "res://assets/audio/sfx/buy_success.ogg",
 	"buy_fail": "res://assets/audio/sfx/buy_fail.ogg",
 	"achievement_unlock": "res://assets/audio/sfx/achievement_unlock.ogg",
