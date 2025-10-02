@@ -1,12 +1,12 @@
-# Скрипт для кликабельного объекта (белый треугольник)
+# Скрипт для кликабельного объекта (main_object)
 # Обрабатывает клики и создает визуальные эффекты
 
 extends Area2D
 
 signal click_performed
 
-# Ссылка на спрайт треугольника
-@onready var triangle: Polygon2D = $Triangle
+# Ссылка на спрайт объекта
+@onready var main_sprite: Sprite2D = $MainObjectSprite
 
 # Tween для анимации клика
 var click_tween: Tween
@@ -66,13 +66,13 @@ func perform_click() -> void:
 # Создание эффекта клика
 func create_click_effect() -> void:
 	# Здесь можно добавить частицы или другие эффекты
-	# Пока просто меняем цвет на короткое время
-	var original_color = triangle.color
-	triangle.color = Color.WHITE
+	# Пока просто меняем модуляцию цвета на короткое время
+	var original_modulate = main_sprite.modulate
+	main_sprite.modulate = Color.WHITE * 1.5  # Делаем ярче
 	
-	# Возвращаем исходный цвет через 0.1 секунды
+	# Возвращаем исходную модуляцию через 0.1 секунды
 	await get_tree().create_timer(0.1).timeout
-	triangle.color = original_color
+	main_sprite.modulate = original_modulate
 
 # Создание эффекта частиц
 func create_particle_effect() -> void:
