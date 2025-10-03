@@ -54,9 +54,6 @@ func perform_click() -> void:
 	# Вызываем GameManager для обработки клика
 	GameManager.perform_click()
 	
-	# Создаем визуальный эффект клика
-	create_click_effect()
-	
 	# Создаем эффект частиц
 	create_particle_effect()
 	
@@ -64,15 +61,6 @@ func perform_click() -> void:
 	create_scale_animation()
 
 # Создание эффекта клика
-func create_click_effect() -> void:
-	# Здесь можно добавить частицы или другие эффекты
-	# Пока просто меняем модуляцию цвета на короткое время
-	var original_modulate = main_sprite.modulate
-	main_sprite.modulate = Color.WHITE * 1.5  # Делаем ярче
-	
-	# Возвращаем исходную модуляцию через 0.1 секунды
-	await get_tree().create_timer(0.1).timeout
-	main_sprite.modulate = original_modulate
 
 # Создание эффекта частиц
 func create_particle_effect() -> void:
