@@ -9,13 +9,12 @@ var clicked_elements: Array[String] = []
 var active_highlights: Dictionary = {}  # element_id -> tween
 
 func _ready() -> void:
-	print("[ClickTracker] Система отслеживания кликов инициализирована")
+	pass
 
 # Отметить элемент как нажатый
 func mark_as_clicked(element_id: String) -> void:
 	if not clicked_elements.has(element_id):
 		clicked_elements.append(element_id)
-		print("[ClickTracker] Элемент отмечен как нажатый: ", element_id)
 		EventBus.emit_signal("element_clicked", element_id)
 
 # Проверить, был ли элемент нажат
@@ -37,25 +36,20 @@ func load_save_data(data: Dictionary) -> void:
 			if item is String:
 				clicked_elements.append(item)
 	
-	print("[ClickTracker] Загружено нажатых элементов: ", clicked_elements.size())
 
 # Подсветить элемент пульсирующим эффектом
 func highlight_tab_with_pulse(tab_control: Control, element_id: String) -> void:
 	if not is_instance_valid(tab_control):
-		print("[ClickTracker] Невалидный элемент для подсветки: ", element_id)
 		return
 	
 	# Если элемент уже подсвечен, не создаем новую подсветку
 	if active_highlights.has(element_id):
-		print("[ClickTracker] Элемент уже подсвечен: ", element_id)
 		return
 	
 	# Если элемент уже был нажат, не подсвечиваем
 	if was_clicked(element_id):
-		print("[ClickTracker] Элемент уже был нажат, пропускаем подсветку: ", element_id)
 		return
 	
-	print("[ClickTracker] Начинаем подсветку элемента: ", element_id)
 	
 	# Создаем пульсирующий эффект
 	var tween = create_tween()
@@ -71,7 +65,6 @@ func remove_highlight(element_id: String) -> void:
 	if not active_highlights.has(element_id):
 		return
 	
-	print("[ClickTracker] Убираем подсветку с элемента: ", element_id)
 	
 	# Останавливаем tween
 	var tween = active_highlights[element_id]
@@ -87,6 +80,5 @@ func stop_highlight(element_id: String) -> void:
 
 # Остановить все подсветки
 func stop_all_highlights() -> void:
-	print("[ClickTracker] Останавливаем все подсветки")
 	for element_id in active_highlights.keys():
 		remove_highlight(element_id)

@@ -47,22 +47,18 @@ func show_value(value: int, start_position: Vector2) -> void:
 func _start_animation() -> void:
 	# Проверяем валидность объекта
 	if not is_instance_valid(self):
-		print("[FloatingText] Объект невалиден, пропускаем анимацию")
 		return
 	
 	# Дополнительные проверки безопасности
 	if not is_inside_tree():
-		print("[FloatingText] Узел не в дереве сцены, пропускаем анимацию")
 		return
 	
 	if is_queued_for_deletion():
-		print("[FloatingText] Узел помечен на удаление, пропускаем анимацию")
 		return
 	
 	# Создаем Tween через TweenManager с отложенным запуском
 	var tween = TweenManager.create_delayed_tween_for_node(self, 0.05)
 	if not tween:
-		print("[FloatingText] Не удалось создать Tween, пропускаем анимацию")
 		return
 	
 	tween.set_parallel(true)
@@ -81,9 +77,7 @@ func _start_animation() -> void:
 	# Завершение анимации
 	tween.tween_callback(_on_animation_complete).set_delay(0.05 + ANIMATION_DURATION)
 	
-	print("[FloatingText] Анимация запущена для значения: ", label.text)
 
 # Обработчик завершения анимации
 func _on_animation_complete() -> void:
-	print("[FloatingText] Анимация завершена для значения: ", label.text)
 	animation_finished.emit(self)

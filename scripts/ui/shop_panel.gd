@@ -58,17 +58,14 @@ func _on_tab_changed(tab: int) -> void:
 	# Сохраняем активную вкладку
 	active_tab_index = tab
 	
-	print("[ShopPanel] Переключение на вкладку: ", tab, " из ", tab_container.get_tab_count())
 	
 	# Проверяем, что вкладка существует и имеет корректные мета-данные
 	var current_tab = tab_container.get_current_tab_control()
 	if not current_tab:
-		print("[ShopPanel] _on_tab_changed: нет активной вкладки")
 		return
 	
 	# Проверяем, что у вкладки есть необходимые мета-данные
 	if not current_tab.has_meta("list_container") or not current_tab.has_meta("category_id"):
-		print("[ShopPanel] _on_tab_changed: у вкладки отсутствуют необходимые мета-данные: ", current_tab.name)
 		return
 	
 	# Получаем ID категории для текущей вкладки
@@ -76,14 +73,13 @@ func _on_tab_changed(tab: int) -> void:
 	if not category_id.is_empty():
 		# Отмечаем вкладку как нажатую
 		# ClickTracker.mark_as_clicked(category_id)  # Отключено - убираем подсветку
-		print("[ShopPanel] Вкладка отмечена как нажатая: ", category_id)
+		pass
 	
 	# Обновляем содержимое при смене вкладки
 	# if tab == tab_container.get_tab_count() - 1: # Последняя вкладка - "Апгрейды"
 	# 	print("[ShopPanel] Рендерим статистику апгрейдов")
 	# 	_render_upgrade_stats()
 	# else: # Вкладки категорий
-	print("[ShopPanel] Рендерим апгрейды для категории")
 	_render_items()
 
 func _prepare_initial_state() -> void:
@@ -98,7 +94,6 @@ func _prepare_initial_state() -> void:
 func animate_show() -> void:
 	# Проверяем валидность объектов
 	if not is_instance_valid(self) or not is_instance_valid(overlay) or not is_instance_valid(panel):
-		print("[ShopPanel] Объекты невалидны, пропускаем анимацию показа")
 		return
 	
 	if _hide_tween:
@@ -114,7 +109,6 @@ func animate_show() -> void:
 func animate_hide() -> void:
 	# Проверяем валидность объектов
 	if not is_instance_valid(self) or not is_instance_valid(overlay) or not is_instance_valid(panel):
-		print("[ShopPanel] Объекты невалидны, пропускаем анимацию скрытия")
 		return
 	
 	if _show_tween:
@@ -148,23 +142,18 @@ func _load_upgrades() -> void:
 		upgrades = {}
 		categories = data.get("categories", {})
 		
-		print("[ShopPanel] Загружены категории: ", categories.keys())
-		print("[ShopPanel] Загружены апгрейды: ", upgrades.keys())
 		
 		# Загружаем только апгрейды (исключаем секцию categories)
 		for key in data.keys():
 			if key != "categories":
 				upgrades[key] = data[key]
 		
-		print("[ShopPanel] После фильтрации апгрейды: ", upgrades.keys())
 	else:
 		push_warning("Failed to parse upgrades.json")
 		upgrades = {}
 		categories = {}
 
 func _setup_categories() -> void:
-	print("[ShopPanel] Настройка категорий...")
-	print("[ShopPanel] Доступные категории: ", categories.keys())
 	
 	# Удаляем все существующие вкладки кроме "Апгрейды"
 	# while tab_container.get_tab_count() > 1:
@@ -179,14 +168,9 @@ func _setup_categories() -> void:
 	
 	# Создаем вкладки для каждой категории
 	for category_id in category_order:
-		print("[ShopPanel] Проверяем категорию: ", category_id)
 		if categories.has(category_id):
-			print("[ShopPanel] Создаем вкладку для: ", category_id)
 			_create_category_tab(category_id)
-		else:
-			print("[ShopPanel] Категория не найдена: ", category_id)
 	
-	print("[ShopPanel] Всего вкладок создано: ", tab_container.get_tab_count())
 	
 	# Устанавливаем активную вкладку
 	if active_tab_index < tab_container.get_tab_count():
@@ -197,8 +181,6 @@ func _setup_categories() -> void:
 
 func _create_category_tab(category_id: String) -> void:
 	var category_data = categories[category_id]
-	print("[ShopPanel] Создание вкладки для категории: ", category_id)
-	print("[ShopPanel] Данные категории: ", category_data)
 	
 	# Создаем контейнер для вкладки
 	var tab_container_node = VBoxContainer.new()
@@ -225,7 +207,6 @@ func _create_category_tab(category_id: String) -> void:
 	var tab_index = tab_container.get_tab_count() - 1
 	tab_container.set_tab_tooltip(tab_index, category_data.get("name", category_id))
 	
-	print("[ShopPanel] Создана вкладка: ", tab_title, " для категории: ", category_data.get("name", category_id))
 	
 	# Сохраняем ссылку на контейнер для рендеринга
 	tab_container_node.set_meta("list_container", vbox_container)
@@ -235,19 +216,13 @@ func _create_category_tab(category_id: String) -> void:
 	tabs_by_id[category_id] = tab_container_node
 	
 	# Проверяем, что мета-данные установлены корректно
-	print("[ShopPanel] Проверка мета-данных для вкладки: ", category_id)
-	print("[ShopPanel] list_container установлен: ", tab_container_node.has_meta("list_container"))
-	print("[ShopPanel] category_id установлен: ", tab_container_node.has_meta("category_id"))
 
 func _render_items() -> void:
 	# Получаем текущую активную вкладку
 	var current_tab = tab_container.get_current_tab_control()
 	if not current_tab:
-		print("[ShopPanel] _render_items: нет активной вкладки")
 		return
 	
-	print("[ShopPanel] _render_items: активная вкладка: ", current_tab.name)
-	print("[ShopPanel] _render_items: класс вкладки: ", current_tab.get_class())
 	
 	# Проверяем, что это не вкладка статистики
 	# if current_tab.name == "Апгрейды":
@@ -256,16 +231,11 @@ func _render_items() -> void:
 	
 	# Проверяем, что у вкладки есть необходимые мета-данные
 	if not current_tab.has_meta("list_container") or not current_tab.has_meta("category_id"):
-		print("[ShopPanel] _render_items: у вкладки отсутствуют необходимые мета-данные: ", current_tab.name)
-		print("[ShopPanel] _render_items: list_container: ", current_tab.has_meta("list_container"))
-		print("[ShopPanel] _render_items: category_id: ", current_tab.has_meta("category_id"))
-		print("[ShopPanel] _render_items: все мета-ключи: ", current_tab.get_meta_list())
 		return
 	
 	# Получаем контейнер для рендеринга
 	var list_container = current_tab.get_meta("list_container", null)
 	if not list_container:
-		print("[ShopPanel] _render_items: нет list_container для вкладки: ", current_tab.name)
 		return
 	
 	# Очищаем контейнер
@@ -284,29 +254,22 @@ func _render_items() -> void:
 	
 	# Получаем апгрейды для этой категории
 	var category_upgrades = _get_upgrades_by_category(category_id)
-	print("[ShopPanel] Найдено апгрейдов для категории ", category_id, ": ", category_upgrades.size())
 	
 	# Рендерим апгрейды
 	for upg_id in category_upgrades:
-		print("[ShopPanel] Рендерим апгрейд: ", upg_id)
 		var upgrade_item = _render_upgrade_item(upg_id, upgrades[upg_id], category_data)
 		if is_instance_valid(upgrade_item) and is_instance_valid(list_container):
 			list_container.add_child(upgrade_item)
 
 func _get_upgrades_by_category(category_id: String) -> Array:
 	var result: Array = []
-	print("[ShopPanel] Поиск апгрейдов для категории: ", category_id)
-	print("[ShopPanel] Всего апгрейдов в словаре: ", upgrades.size())
 	
 	for upg_id in upgrades.keys():
 		var data: Dictionary = upgrades[upg_id]
 		var upgrade_category = data.get("category", "")
-		print("[ShopPanel] Апгрейд ", upg_id, " имеет категорию: ", upgrade_category)
 		if upgrade_category == category_id:
 			result.append(upg_id)
-			print("[ShopPanel] Добавлен апгрейд: ", upg_id)
 	
-	print("[ShopPanel] Итого найдено для категории ", category_id, ": ", result.size())
 	return result
 
 func _render_upgrade_item(upg_id: String, data: Dictionary, category_data: Dictionary) -> Control:
@@ -442,9 +405,7 @@ func _on_buy_pressed(upg_id: String) -> void:
 	var stat := String(data.get("stat", ""))
 	var value := float(data.get("value", 0.0))
 	if stat != "":
-		print("[ShopPanel] purchase ", upg_id, ": applying ", stat, " +", value)
 		GameManager.apply_upgrade_effect(stat, value)
-		print("[ShopPanel] after apply: click_multiplier=", GameManager.click_multiplier, ", level=", GameManager.get_upgrade_level(upg_id))
 	EventBus.emit_signal("upgrade_purchased", upg_id)
 	_render_items()
 	# _render_upgrade_stats()
@@ -514,24 +475,14 @@ func get_tab_info() -> Dictionary:
 
 # Логирование информации о вкладках
 func _log_tabs_info() -> void:
-	print("[ShopPanel] Найдены вкладки:")
 	for tab_id in tabs_by_id.keys():
 		var tab = tabs_by_id[tab_id]
 		var icon = categories[tab_id].get("icon", "📦")
 		var name = categories[tab_id].get("name", tab_id)
-		print("[ShopPanel] - %s (%s): %s" % [tab_id, icon, name])
 	
-	# Проверяем наличие нужных вкладок
-	var target_tabs = ["auto_click_upgrades", "multiplier_upgrades"]
-	for target_tab in target_tabs:
-		if tabs_by_id.has(target_tab):
-			print("[ShopPanel] ✅ Найдена целевая вкладка: %s" % target_tab)
-		else:
-			print("[ShopPanel] ❌ Целевая вкладка не найдена: %s" % target_tab)
 
 # Настройка подсветок для новых вкладок
 func _setup_highlights() -> void:
-	print("[ShopPanel] Настройка подсветок для вкладок")
 	
 	# Целевые вкладки для подсветки
 	var target_tabs = ["auto_click_upgrades", "multiplier_upgrades"]
@@ -540,12 +491,7 @@ func _setup_highlights() -> void:
 		if tabs_by_id.has(tab_id):
 			var tab_control = tabs_by_id[tab_id]
 			if is_instance_valid(tab_control):
-				print("[ShopPanel] Настраиваем подсветку для вкладки: ", tab_id)
 				ClickTracker.highlight_tab_with_pulse(tab_control, tab_id)
-			else:
-				print("[ShopPanel] Вкладка невалидна: ", tab_id)
-		else:
-			print("[ShopPanel] Вкладка не найдена: ", tab_id)
 
 # Очистка при уничтожении
 func _exit_tree() -> void:

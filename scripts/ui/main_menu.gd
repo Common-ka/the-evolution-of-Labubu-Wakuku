@@ -25,7 +25,6 @@ func _ready() -> void:
 
 # Обработка нажатия "Начать игру"
 func _on_start_button_pressed() -> void:
-	print("Начинаем новую игру")
 	
 	# Сбрасываем игру к начальному состоянию
 	GameManager.reset_game()
@@ -35,7 +34,6 @@ func _on_start_button_pressed() -> void:
 
 # Обработка нажатия "Продолжить"
 func _on_continue_button_pressed() -> void:
-	print("Продолжаем игру")
 	
 	# Загружаем сохранение
 	SaveSystem.load_game()
@@ -44,7 +42,6 @@ func _on_continue_button_pressed() -> void:
 	change_scene_to_game()
 
 func _on_achievements_button_pressed() -> void:
-	print("Открываем панель достижений")
 	var panel = load("res://scenes/ui/achievement_panel.tscn").instantiate()
 	add_child(panel)
 	panel.show()
@@ -56,11 +53,9 @@ func _on_settings_button_pressed() -> void:
 	if SoundManager:
 		var new_state = SoundManager.toggle_sound()
 		update_sound_button()
-		print("Звук переключен: ", "включен" if new_state else "выключен")
 
 # Обработка нажатия "Выход"
 func _on_quit_button_pressed() -> void:
-	print("Выходим из игры")
 	get_tree().quit()
 
 # Переход к игровой сцене

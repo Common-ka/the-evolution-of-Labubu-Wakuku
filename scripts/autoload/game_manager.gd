@@ -101,12 +101,10 @@ func apply_upgrade_effect(stat: String, effect_value: float) -> void:
 		"click_multiplier":
 			var before := click_multiplier
 			click_multiplier += effect_value
-			print("[GameManager] click_multiplier: %f -> %f (+%f)" % [before, click_multiplier, effect_value])
 
 		"auto_click_rate":
 			var before := auto_click_rate
 			auto_click_rate += effect_value
-			print("[GameManager] auto_click_rate: %f -> %f (+%f)" % [before, auto_click_rate, effect_value])
 			
 			# Останавливаем старый таймер и запускаем новый с обновленными настройками
 			if auto_click_timer:
@@ -119,12 +117,10 @@ func apply_upgrade_effect(stat: String, effect_value: float) -> void:
 				var timer_interval = 1.0 / auto_click_rate
 				auto_click_timer.wait_time = timer_interval
 				auto_click_timer.start()
-				print("[GameManager] Автоклик запущен: %f в секунду, интервал: %f сек" % [auto_click_rate, timer_interval])
 
 		"global_multiplier":
 			var before := global_multiplier
 			global_multiplier += effect_value
-			print("[GameManager] global_multiplier: %f -> %f (+%f)" % [before, global_multiplier, effect_value])
 	
 	EventBus.emit_signal("upgrade_effect_applied", stat, effect_value)
 
@@ -194,7 +190,6 @@ func load_save_data(data: Dictionary) -> void:
 			var timer_interval = 1.0 / auto_click_rate
 			auto_click_timer.wait_time = timer_interval
 			auto_click_timer.start()
-			print("[GameManager] Автоклик восстановлен при загрузке: %f в секунду" % auto_click_rate)
 	
 	# Эмиссия сигналов обновления
 	EventBus.emit_signal("currency_changed", current_currency)
@@ -256,12 +251,10 @@ func _create_floating_text(click_value: int) -> void:
 	# Получаем позицию кликабельного объекта
 	var game_scene = get_tree().current_scene
 	if not game_scene:
-		print("[GameManager] Не удалось найти текущую сцену")
 		return
 	
 	var clickable_object = game_scene.get_node_or_null("GameArea/ClickableObject")
 	if not clickable_object:
-		print("[GameManager] Не удалось найти ClickableObject")
 		return
 	
 	# Получаем мировую позицию объекта
@@ -275,9 +268,7 @@ func _create_floating_text(click_value: int) -> void:
 	if ui_node:
 		ui_node.add_child(floating_text)
 		floating_text.show_value(click_value, world_position)
-		print("[GameManager] Создан Floating Text для значения: ", click_value)
 	else:
-		print("[GameManager] Не удалось найти UI узел")
 		# Возвращаем объект в пул если не удалось добавить
 		FloatingTextPool.return_text_to_pool(floating_text)
 
@@ -287,15 +278,14 @@ func _on_upgrade_purchased(upgrade_id: String) -> void:
 
 # Обработчик запроса эффекта частиц
 func _on_particle_effect_requested(effect_type: String, position: Vector2) -> void:
-	print("[GameManager] Запрошен эффект частиц: ", effect_type, " в позиции: ", position)
 	# Здесь можно добавить дополнительную логику для разных типов эффектов
+	pass
 
 func _on_auto_click_timer_timeout() -> void:
 	if auto_click_rate > 0:
 		# Рассчитываем значение автоклика с учетом всех множителей
 		var auto_click_value = int(ceil(auto_click_rate * global_multiplier))
 		add_currency(auto_click_value)
-		print("[GameManager] Автоклик: +%d валюты (база: %f, множитель: %f)" % [auto_click_value, auto_click_rate, global_multiplier])
 
 # Получить данные апгрейда из JSON файла
 func _get_upgrade_data(upgrade_id: String) -> Dictionary:

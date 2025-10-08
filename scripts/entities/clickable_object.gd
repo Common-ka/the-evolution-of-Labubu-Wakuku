@@ -49,7 +49,6 @@ func _on_mouse_exited() -> void:
 
 # Выполнение клика
 func perform_click() -> void:
-	print("ClickableObject: perform_click() вызван")
 	
 	# Вызываем GameManager для обработки клика
 	GameManager.perform_click()
@@ -74,16 +73,13 @@ func create_particle_effect() -> void:
 func create_scale_animation() -> void:
 	# Проверяем валидность объекта
 	if not is_instance_valid(self):
-		print("[ClickableObject] Объект невалиден, пропускаем анимацию")
 		return
 	
 	# Дополнительные проверки безопасности
 	if not is_inside_tree():
-		print("[ClickableObject] Узел не в дереве сцены, пропускаем анимацию")
 		return
 	
 	if is_queued_for_deletion():
-		print("[ClickableObject] Узел помечен на удаление, пропускаем анимацию")
 		return
 	
 	# Останавливаем предыдущую анимацию если она есть
@@ -93,7 +89,6 @@ func create_scale_animation() -> void:
 	# Создаем Tween через TweenManager
 	click_tween = TweenManager.create_delayed_tween_for_node(self, 0.05)
 	if not click_tween:
-		print("[ClickableObject] Не удалось создать Tween, пропускаем анимацию")
 		return
 	
 	click_tween.set_parallel(true)
@@ -138,4 +133,4 @@ func remove_hover_effect() -> void:
 # Очистка при уничтожении
 func _exit_tree() -> void:
 	# TweenManager автоматически очистит все Tween'ы для этого узла
-	print("[ClickableObject] Очистка завершена")
+	pass

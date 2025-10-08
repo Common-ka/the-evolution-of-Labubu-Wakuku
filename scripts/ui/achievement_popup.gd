@@ -28,7 +28,6 @@ func _ready() -> void:
 	# Изначально скрываем попап
 	hide()
 	
-	print("[AchievementPopup] Инициализирован и подключен к EventBus")
 
 # Показать уведомление о достижении
 func show_achievement(achievement_id: String) -> void:
@@ -59,22 +58,18 @@ func show_achievement(achievement_id: String) -> void:
 	# Запускаем таймер автоматического закрытия
 	auto_close_timer.start(DISPLAY_DURATION)
 	
-	print("[AchievementPopup] Показано уведомление для: ", achievement.name)
 
 # Анимация появления
 func _animate_in() -> void:
 	# Проверяем валидность объекта
 	if not is_instance_valid(self):
-		print("[AchievementPopup] Объект невалиден, пропускаем анимацию")
 		return
 	
 	# Дополнительные проверки безопасности
 	if not is_inside_tree():
-		print("[AchievementPopup] Узел не в дереве сцены, пропускаем анимацию")
 		return
 	
 	if is_queued_for_deletion():
-		print("[AchievementPopup] Узел помечен на удаление, пропускаем анимацию")
 		return
 	
 	# Начальное состояние: скрыто
@@ -88,24 +83,20 @@ func _animate_in() -> void:
 	if tween:
 		# В Godot 4 задержка устанавливается на Tweener'е
 		tween.tween_property(self, "modulate:a", 1.0, ANIMATION_DURATION).set_delay(0.05)
-		print("[AchievementPopup] Анимация появления запущена")
 	else:
-		print("[AchievementPopup] Не удалось создать Tween для анимации появления")
+		pass
 
 # Анимация исчезновения
 func _animate_out() -> void:
 	# Проверяем валидность объекта
 	if not is_instance_valid(self):
-		print("[AchievementPopup] Объект невалиден, пропускаем анимацию")
 		return
 	
 	# Дополнительные проверки безопасности
 	if not is_inside_tree():
-		print("[AchievementPopup] Узел не в дереве сцены, пропускаем анимацию")
 		return
 	
 	if is_queued_for_deletion():
-		print("[AchievementPopup] Узел помечен на удаление, пропускаем анимацию")
 		return
 	
 	# Анимация исчезновения через TweenManager с отложенным запуском
@@ -117,9 +108,7 @@ func _animate_out() -> void:
 		# Скрываем после завершения анимации
 		tween.tween_callback(hide)
 		
-		print("[AchievementPopup] Анимация исчезновения запущена")
 	else:
-		print("[AchievementPopup] Не удалось создать Tween для анимации исчезновения")
 		# Fallback: скрываем сразу
 		hide()
 
@@ -144,4 +133,3 @@ func _exit_tree() -> void:
 		auto_close_timer.queue_free()
 	
 	# TweenManager автоматически очистит все Tween'ы для этого узла
-	print("[AchievementPopup] Очистка завершена")

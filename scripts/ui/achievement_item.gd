@@ -14,28 +14,21 @@ var achievement: Achievement
 var _is_ready: bool = false
 
 func _ready() -> void:
-	print("[AchievementListItem] _ready() вызван")
 	_is_ready = true
 	if achievement != null:
-		print("[AchievementListItem] achievement уже установлен, вызываю _refresh()")
 		_refresh()
 	else:
-		print("[AchievementListItem] achievement не установлен")
+		pass
 
 func setup(achievement_data: Achievement) -> void:
-	print("[AchievementListItem] setup() вызван для достижения: %s" % achievement_data.name)
 	achievement = achievement_data
 	if _is_ready:
-		print("[AchievementListItem] _is_ready = true, вызываю _refresh()")
 		_refresh()
 	else:
-		print("[AchievementListItem] _is_ready = false, вызываю call_deferred('_refresh')")
 		call_deferred("_refresh")
 
 func _refresh() -> void:
-	print("[AchievementListItem] _refresh() вызван")
 	if achievement == null:
-		print("[AchievementListItem] achievement == null, выход")
 		return
 
 	if icon_label == null or name_label == null or description_label == null:

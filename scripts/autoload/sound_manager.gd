@@ -76,7 +76,6 @@ func _on_upgrade_purchased(_upgrade_id: String) -> void:
 	play_sfx("buy_success")
 
 func _on_achievement_unlocked(_achievement_id: String) -> void:
-	print("[SoundManager] Воспроизводим звук достижения для: ", _achievement_id)
 	play_sfx("achievement_unlock", 0.0, 1.0)
 
 func play_ui(name: String) -> void:
@@ -125,7 +124,6 @@ func _get_stream(name: String) -> AudioStream:
 	var path: String = String(SFX.get(name, ""))
 	if path == "" or not FileAccess.file_exists(path):
 		# No asset: skip silently in production, print in dev
-		print("[SoundManager] Asset not found for '", name, "': ", path)
 		return null
 	var stream: AudioStream = load(path)
 	sfx_cache[name] = stream
@@ -148,20 +146,17 @@ func toggle_sound() -> bool:
 	is_sound_enabled = !is_sound_enabled
 	_apply_sound_state()
 	_save_sound_state()
-	print("[SoundManager] Звук ", "включен" if is_sound_enabled else "выключен")
 	return is_sound_enabled
 
 func enable_sound() -> void:
 	is_sound_enabled = true
 	_apply_sound_state()
 	_save_sound_state()
-	print("[SoundManager] Звук включен")
 
 func disable_sound() -> void:
 	is_sound_enabled = false
 	_apply_sound_state()
 	_save_sound_state()
-	print("[SoundManager] Звук выключен")
 
 func _apply_sound_state() -> void:
 	# Mute/unmute all audio buses
@@ -183,7 +178,6 @@ func _load_sound_state() -> void:
 		is_sound_enabled = true  # По умолчанию звук включен
 	
 	_apply_sound_state()
-	print("[SoundManager] Состояние звука загружено: ", "включен" if is_sound_enabled else "выключен")
 
 func get_sound_state() -> bool:
 	return is_sound_enabled

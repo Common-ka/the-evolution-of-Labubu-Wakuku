@@ -9,7 +9,6 @@ func _ready() -> void:
 	progress = AchievementProgress.new()
 	_load_achievements()
 	_connect_signals()
-	print("[AchievementManager] Система достижений инициализирована")
 
 func _connect_signals() -> void:
 	# Подключение к существующим сигналам
@@ -18,7 +17,6 @@ func _connect_signals() -> void:
 	EventBus.upgrade_purchased.connect(_on_upgrade_purchased)
 	EventBus.level_up.connect(_on_level_up)
 	EventBus.achievement_unlocked.connect(_on_achievement_unlocked)
-	print("[AchievementManager] Сигналы подключены")
 
 func _load_achievements() -> void:
 	var file = FileAccess.open("res://data/achievements.json", FileAccess.READ)
@@ -28,7 +26,6 @@ func _load_achievements() -> void:
 		if parse_result == OK:
 			var data = json.data
 			_parse_achievements(data.achievements)
-			print("[AchievementManager] Загружено достижений: ", achievements.size())
 		else:
 			push_error("[AchievementManager] Ошибка парсинга JSON достижений")
 		file.close()
@@ -51,7 +48,6 @@ func _parse_achievements(achievements_data: Dictionary) -> void:
 			achievement.reward_amount = tier.reward.amount
 			
 			achievements[tier.id] = achievement
-			print("[AchievementManager] Создано достижение: ", achievement.name, " (", achievement.id, ")")
 
 func check_achievements() -> void:
 	for achievement_id in achievements:
@@ -72,11 +68,9 @@ func _check_achievement_condition(achievement: Achievement) -> void:
 
 # Обработка выдачи наград и фиксация анлоков
 func _on_achievement_unlocked(achievement_id: String) -> void:
-	print("[AchievementManager] Получен сигнал achievement_unlocked для: ", achievement_id)
 	
 	# Исключаем повторную выдачу
 	if unlocked_achievements.has(achievement_id):
-		print("[AchievementManager] Достижение уже разблокировано, пропускаем: ", achievement_id)
 		return
 
 	var a: Achievement = achievements.get(achievement_id, null)
@@ -85,19 +79,15 @@ func _on_achievement_unlocked(achievement_id: String) -> void:
 
 	# Фиксируем анлок, чтобы не дублировать награды
 	unlocked_achievements.append(achievement_id)
-	print("[AchievementManager] Выдача награды за достижение: ", achievement_id)
 
 	match a.reward_type:
 		"currency":
 			GameManager.add_currency(int(a.reward_amount))
-			print("[AchievementManager] Награда валютой: +", a.reward_amount)
 		"multiplier":
 			GameManager.apply_upgrade_effect("global_multiplier", float(a.reward_amount))
-			print("[AchievementManager] Награда множителем: +", a.reward_amount)
 		"unlock":
 			# Хук для будущих разблокировок контента
 			EventBus.emit_signal("game_state_changed")
-			print("[AchievementManager] Награда: разблокировка контента (hook)")
 
 	# Сигнал для UI/уведомлений
 	EventBus.emit_signal("achievement_condition_met", achievement_id)
@@ -177,4 +167,3 @@ func load_save_data(data: Dictionary) -> void:
 		progress.upgrades_purchased = progress_data.get("upgrades_purchased", 0)
 		progress.total_levels = progress_data.get("total_levels", 0)
 	
-	print("[AchievementManager] Данные достижений загружены")

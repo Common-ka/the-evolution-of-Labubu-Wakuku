@@ -15,7 +15,6 @@ func _ready() -> void:
 	# Предзагружаем сцену Floating Text
 	floating_text_scene = preload("res://scenes/ui/floating_text.tscn")
 	_prepopulate_pool()
-	print("[FloatingTextPool] Пул инициализирован с ", INITIAL_POOL_SIZE, " объектами")
 
 # Получить Floating Text из пула
 func get_floating_text() -> Control:
@@ -25,11 +24,9 @@ func get_floating_text() -> Control:
 		# Создаем новый объект если пул пуст
 		text = floating_text_scene.instantiate()
 		text.animation_finished.connect(_on_text_animation_finished)
-		print("[FloatingTextPool] Создан новый Floating Text")
 	else:
 		# Берем объект из пула
 		text = available_texts.pop_back()
-		print("[FloatingTextPool] Взят Floating Text из пула. Осталось: ", available_texts.size())
 	
 	# Добавляем в активные
 	active_texts.append(text)
@@ -51,10 +48,8 @@ func return_text_to_pool(text: Control) -> void:
 	# Возвращаем в пул или удаляем
 	if available_texts.size() < MAX_POOL_SIZE:
 		available_texts.append(text)
-		print("[FloatingTextPool] Floating Text возвращен в пул. Размер пула: ", available_texts.size())
 	else:
 		text.queue_free()
-		print("[FloatingTextPool] Floating Text удален (пул переполнен)")
 
 # Предварительное заполнение пула
 func _prepopulate_pool() -> void:

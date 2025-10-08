@@ -56,10 +56,9 @@ func save_game() -> void:
 	if file:
 		file.store_string(json_string)
 		file.close()
-		print("Игра сохранена успешно")
 		EventBus.emit_signal("save_completed")
 	else:
-		print("Ошибка при сохранении игры")
+		pass
 	
 	is_saving = false
 
@@ -71,7 +70,6 @@ func load_game() -> void:
 	is_loading = true
 	
 	if not has_save_data():
-		print("Файл сохранения не найден")
 		is_loading = false
 		return
 	
@@ -89,7 +87,7 @@ func load_game() -> void:
 			
 			# Проверка версии
 			if save_data.get("version", "") != SAVE_VERSION:
-				print("Версия сохранения не совпадает, загрузка может быть некорректной")
+				pass
 			
 			# Загрузка игровых данных
 			var game_data: Dictionary = save_data.get("game_data", {})
@@ -103,12 +101,11 @@ func load_game() -> void:
 			if save_data.has("clicked_elements") and ClickTracker:
 				ClickTracker.load_save_data(save_data.clicked_elements)
 			
-			print("Игра загружена успешно")
 			EventBus.emit_signal("load_completed")
 		else:
-			print("Ошибка при парсинге файла сохранения")
+			pass
 	else:
-		print("Ошибка при открытии файла сохранения")
+		pass
 	
 	is_loading = false
 
@@ -120,7 +117,6 @@ func has_save_data() -> bool:
 func delete_save_data() -> void:
 	if has_save_data():
 		DirAccess.remove_absolute(SAVE_FILE_PATH)
-		print("Сохранение удалено")
 
 # Получение информации о сохранении
 func get_save_info() -> Dictionary:
@@ -170,7 +166,6 @@ func import_save_data(json_string: String) -> bool:
 		
 		# Проверка структуры
 		if not save_data.has("version") or not save_data.has("game_data"):
-			print("Неверный формат файла сохранения")
 			return false
 		
 		# Сохранение импортированных данных
@@ -179,13 +174,10 @@ func import_save_data(json_string: String) -> bool:
 		if file:
 			file.store_string(json_string)
 			file.close()
-			print("Сохранение импортировано успешно")
 			return true
 		else:
-			print("Ошибка при импорте сохранения")
 			return false
 	else:
-		print("Ошибка при парсинге импортируемого файла")
 		return false
 
 # Сигналы

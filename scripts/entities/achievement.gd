@@ -33,7 +33,6 @@ func unlock() -> void:
 	
 	is_unlocked = true
 	EventBus.emit_signal("achievement_unlocked", id)
-	print("[Achievement] Разблокировано достижение: ", name, " (", id, ")")
 
 func get_description_with_target() -> String:
 	return description.replace("{target}", str(target))

@@ -48,7 +48,6 @@ func create_tween_for_node(node: Node) -> Tween:
 	# Подключаемся к сигналу завершения
 	tween.finished.connect(_on_tween_finished.bind(tween, node))
 	
-	print("[TweenManager] Создан Tween для узла: ", node.name)
 	tween_started.emit(tween, node)
 	
 	return tween
@@ -58,7 +57,6 @@ func create_global_tween() -> Tween:
 	var tween = get_tree().create_tween()
 	global_tweens.append(tween)
 	
-	print("[TweenManager] Создан глобальный Tween")
 	tween_started.emit(tween, null)
 	
 	return tween
@@ -69,7 +67,7 @@ func create_delayed_tween_for_node(node: Node, delay: float = 0.1) -> Tween:
 	if tween:
 		# В Godot 4 задержка устанавливается на уровне Tweener'а, а не Tween'а
 		# Поэтому просто возвращаем Tween - задержку нужно устанавливать при создании Tweener'ов
-		print("[TweenManager] Создан Tween с возможностью отложенного запуска для узла: ", node.name)
+		pass
 	return tween
 
 # Убивает все Tween'ы для конкретного узла
@@ -84,7 +82,6 @@ func kill_node_tweens(node: Node) -> void:
 			tween_killed.emit(tween, node)
 	
 	node_tweens.erase(node)
-	print("[TweenManager] Убиты все Tween'ы для узла: ", node.name)
 
 # Убивает конкретный Tween
 func kill_tween(tween: Tween, node: Node = null) -> void:
@@ -120,7 +117,6 @@ func kill_all_global_tweens() -> void:
 			tween_killed.emit(tween, null)
 	
 	global_tweens.clear()
-	print("[TweenManager] Убиты все глобальные Tween'ы")
 
 # Убивает все Tween'ы в системе
 func kill_all_tweens() -> void:
@@ -132,7 +128,6 @@ func kill_all_tweens() -> void:
 	# Убиваем глобальные Tween'ы
 	kill_all_global_tweens()
 	
-	print("[TweenManager] Убиты все Tween'ы в системе")
 
 # Получает количество активных Tween'ов для узла
 func get_node_tween_count(node: Node) -> int:
@@ -177,7 +172,6 @@ func cleanup_invalid_nodes() -> void:
 					tween_killed.emit(tween, node)
 		
 		node_tweens.erase(node)
-		print("[TweenManager] Убран невалидный узел: ", node_name)
 
 # Обработчик завершения Tween'а
 func _on_tween_finished(tween: Tween, node: Node) -> void:
@@ -186,7 +180,6 @@ func _on_tween_finished(tween: Tween, node: Node) -> void:
 	if node and is_instance_valid(node):
 		node_name = node.name
 	
-	print("[TweenManager] Tween завершен для узла: ", node_name)
 	tween_finished.emit(tween, node)
 	
 	# Убираем завершенный Tween из списков

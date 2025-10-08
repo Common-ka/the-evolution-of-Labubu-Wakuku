@@ -35,13 +35,9 @@ func _ready() -> void:
 	update_level_display()
 	
 	# Отладочная информация о HUD
-	print("Game UI: HUD размеры - ", $UI/HUD.size)
-	print("Game UI: HUD позиция - ", $UI/HUD.position)
-	print("Game UI: HUD mouse_filter - ", $UI/HUD.mouse_filter)
 
 # Обработка нажатия кнопки "Меню"
 func _on_menu_button_pressed() -> void:
-	print("Возвращаемся в главное меню")
 	
 	# Сохраняем игру перед выходом
 	SaveSystem.save_game()
@@ -105,11 +101,10 @@ func _on_level_up(_new_level: int) -> void:
 # Отладочная обработка всех событий ввода
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed:
-		print("Game UI: Получен клик мыши в позиции ", event.position, " кнопка ", event.button_index)
 		
 		# Проверяем, попадает ли клик в область HUD
 		var hud_rect = Rect2($UI/HUD.position, $UI/HUD.size)
 		if hud_rect.has_point(event.position):
-			print("Game UI: Клик попал в область HUD")
+			pass
 		else:
-			print("Game UI: Клик НЕ попал в область HUD")
+			pass

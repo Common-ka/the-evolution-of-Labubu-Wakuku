@@ -11,22 +11,18 @@ var total_levels: int = 0
 func update_clicks(click_count: int) -> void:
 	cumulative_clicks = click_count
 	EventBus.emit_signal("achievement_progress_updated", "cumulative_clicks", cumulative_clicks)
-	print("[AchievementProgress] Обновлен прогресс кликов: ", cumulative_clicks)
 
 func update_currency(currency_amount: int) -> void:
 	total_currency = currency_amount
 	EventBus.emit_signal("achievement_progress_updated", "total_currency", total_currency)
-	print("[AchievementProgress] Обновлен прогресс валюты: ", total_currency)
 
 func update_upgrades(upgrade_count: int) -> void:
 	upgrades_purchased = upgrade_count
 	EventBus.emit_signal("achievement_progress_updated", "upgrades_purchased", upgrade_count)
-	print("[AchievementProgress] Обновлен прогресс апгрейдов: ", upgrade_count)
 
 func update_levels(level_count: int) -> void:
 	total_levels = level_count
 	EventBus.emit_signal("achievement_progress_updated", "total_levels", level_count)
-	print("[AchievementProgress] Обновлен прогресс уровней: ", total_levels)
 
 # Получение прогресса по типу
 func get_progress_by_type(progress_type: String) -> int:
@@ -48,4 +44,3 @@ func reset_progress() -> void:
 	total_currency = 0
 	upgrades_purchased = 0
 	total_levels = 0
-	print("[AchievementProgress] Прогресс сброшен")
