@@ -6,6 +6,10 @@
 [node name="Game" type="Node2D"]
 script = ExtResource("1_0x0x0")
 
+[node name="Background" type="Sprite2D" parent="."]
+scale = Vector2(0.5, 0.5)
+centered = false
+
 [node name="UI" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true
 
@@ -72,9 +76,3 @@ text = "Магазин"
 
 [node name="ClickableObject" parent="GameArea" instance=ExtResource("2_0x0x0")]
 position = Vector2(180, 320)
-
-[node name="Background" type="ColorRect" parent="."]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-color = Color(0.2, 0.2, 0.2, 1)

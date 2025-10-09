@@ -314,10 +314,11 @@ func _render_upgrade_item(upg_id: String, data: Dictionary, category_data: Dicti
 	cost_label.custom_minimum_size = Vector2(50, 0)
 	h.add_child(cost_label)
 	
-	# Кнопка покупки
+	# Кнопка покупки (покупки бесконечны)
 	var buy := Button.new()
 	buy.text = "Купить"
-	buy.disabled = GameManager.current_currency < cost or GameManager.get_upgrade_level(upg_id) >= int(data.get("max_level", 1))
+	# Единственное ограничение — хватает ли валюты
+	buy.disabled = GameManager.current_currency < cost
 	buy.pressed.connect(func(): _on_buy_pressed(upg_id))
 	buy.custom_minimum_size = Vector2(60, 28)
 	buy.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
@@ -396,10 +397,11 @@ func _on_buy_pressed(upg_id: String) -> void:
 	var data: Dictionary = upgrades.get(upg_id, {})
 	if data.is_empty():
 		return
+	
 	var cost := _calc_cost(upg_id, data)
 	if not GameManager.spend_currency(cost):
 		return
-	# повысить уровень
+	# повысить уровень (без ограничений)
 	GameManager.increment_upgrade_level(upg_id)
 	# применить эффект
 	var stat := String(data.get("stat", ""))
