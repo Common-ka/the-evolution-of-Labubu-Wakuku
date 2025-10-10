@@ -62,9 +62,6 @@ text = "Достижения"
 layout_mode = 2
 text = "🔊 Звук ВКЛ"
 
-[node name="QuitButton" type="Button" parent="ButtonsContainer"]
-layout_mode = 2
-text = "Выход"
 
 [node name="VersionLabel" type="Label" parent="."]
 layout_mode = 1

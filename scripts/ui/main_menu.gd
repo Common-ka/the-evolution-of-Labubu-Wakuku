@@ -7,7 +7,6 @@ extends Control
 @onready var continue_button: Button = $ButtonsContainer/ContinueButton
 @onready var achievements_button: Button = $ButtonsContainer/AchievementsButton
 @onready var settings_button: Button = $ButtonsContainer/SettingsButton
-@onready var quit_button: Button = $ButtonsContainer/QuitButton
 
 func _ready() -> void:
 	# Подключение сигналов кнопок
@@ -15,7 +14,7 @@ func _ready() -> void:
 	continue_button.pressed.connect(_on_continue_button_pressed)
 	achievements_button.pressed.connect(_on_achievements_button_pressed)
 	settings_button.pressed.connect(_on_settings_button_pressed)
-	quit_button.pressed.connect(_on_quit_button_pressed)
+    
 	
 	# Проверяем наличие сохранения для кнопки "Продолжить"
 	update_continue_button()
@@ -54,9 +53,7 @@ func _on_settings_button_pressed() -> void:
 		var new_state = SoundManager.toggle_sound()
 		update_sound_button()
 
-# Обработка нажатия "Выход"
-func _on_quit_button_pressed() -> void:
-	get_tree().quit()
+
 
 # Переход к игровой сцене
 func change_scene_to_game() -> void:
