@@ -3,14 +3,12 @@ extends Control
 # Скрипт для главного меню
 
 # Ссылки на кнопки
-@onready var start_button: Button = $ButtonsContainer/StartButton
 @onready var continue_button: Button = $ButtonsContainer/ContinueButton
 @onready var achievements_button: Button = $ButtonsContainer/AchievementsButton
 @onready var settings_button: Button = $ButtonsContainer/SettingsButton
 
 func _ready() -> void:
 	# Подключение сигналов кнопок
-	start_button.pressed.connect(_on_start_button_pressed)
 	continue_button.pressed.connect(_on_continue_button_pressed)
 	achievements_button.pressed.connect(_on_achievements_button_pressed)
 	settings_button.pressed.connect(_on_settings_button_pressed)
@@ -21,15 +19,6 @@ func _ready() -> void:
 	
 	# Обновляем текст кнопки звука при запуске
 	update_sound_button()
-
-# Обработка нажатия "Начать игру"
-func _on_start_button_pressed() -> void:
-	
-	# Сбрасываем игру к начальному состоянию
-	GameManager.reset_game()
-	
-	# Переходим к игровой сцене
-	change_scene_to_game()
 
 # Обработка нажатия "Продолжить"
 func _on_continue_button_pressed() -> void:
