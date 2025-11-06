@@ -28,7 +28,7 @@ offset_top = 100.0
 offset_right = -20.0
 offset_bottom = 180.0
 grow_horizontal = 2
-text = "The Evolution of Labubu: Wakuku"
+text = "Обби кликер: Выполни все достижения"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -50,6 +50,10 @@ grow_vertical = 2
 layout_mode = 2
 text = "Продолжить"
 
+[node name="NewGameButton" type="Button" parent="ButtonsContainer"]
+layout_mode = 2
+text = "Новая игра"
+
 [node name="AchievementsButton" type="Button" parent="ButtonsContainer"]
 layout_mode = 2
 text = "Достижения"
@@ -57,7 +61,6 @@ text = "Достижения"
 [node name="SettingsButton" type="Button" parent="ButtonsContainer"]
 layout_mode = 2
 text = "🔊 Звук ВКЛ"
-
 
 [node name="VersionLabel" type="Label" parent="."]
 layout_mode = 1
