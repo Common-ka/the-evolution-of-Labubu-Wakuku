@@ -11,11 +11,10 @@ extends Control
 func _ready() -> void:
 	# Подключение сигналов кнопок
 	continue_button.pressed.connect(_on_continue_button_pressed)
-    new_game_button.pressed.connect(_on_new_game_button_pressed)
+	new_game_button.pressed.connect(_on_new_game_button_pressed)
 	achievements_button.pressed.connect(_on_achievements_button_pressed)
 	settings_button.pressed.connect(_on_settings_button_pressed)
-    
-	
+		
 	# Проверяем наличие сохранения для кнопки "Продолжить"
 	update_continue_button()
 	
@@ -33,12 +32,12 @@ func _on_continue_button_pressed() -> void:
 
 # Обработка нажатия "Новая игра"
 func _on_new_game_button_pressed() -> void:
-    # Удаляем сохранение и сбрасываем состояние игры
-    if SaveSystem:
-        SaveSystem.delete_save_data()
-    GameManager.reset_game()
-    # Переходим к игровой сцене
-    change_scene_to_game()
+	# Удаляем сохранение и сбрасываем состояние игры
+	if SaveSystem:
+		SaveSystem.delete_save_data()
+	GameManager.reset_game()
+	# Переходим к игровой сцене
+	change_scene_to_game()
 
 func _on_achievements_button_pressed() -> void:
 	var panel = load("res://scenes/ui/achievement_panel.tscn").instantiate()
