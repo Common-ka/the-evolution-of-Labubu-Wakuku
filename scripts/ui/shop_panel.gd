@@ -38,9 +38,6 @@ func _ready() -> void:
 	close_button.pressed.connect(_on_close_pressed)
 	tab_container.tab_changed.connect(_on_tab_changed)
 	
-	# Подписка на сигнал изменения валюты для обновления кнопок
-	EventBus.currency_changed.connect(_on_currency_changed)
-	
 	_prepare_initial_state()
 	
 	_load_upgrades()
@@ -320,8 +317,6 @@ func _render_upgrade_item(upg_id: String, data: Dictionary, category_data: Dicti
 	# Кнопка покупки (покупки бесконечны)
 	var buy := Button.new()
 	buy.text = "Купить"
-	# Сохраняем ID апгрейда в мета-данных кнопки для обновления состояния
-	buy.set_meta("upgrade_id", upg_id)
 	# Единственное ограничение — хватает ли валюты
 	buy.disabled = GameManager.current_currency < cost
 	buy.pressed.connect(func(): _on_buy_pressed(upg_id))
@@ -500,73 +495,8 @@ func _setup_highlights() -> void:
 			if is_instance_valid(tab_control):
 				ClickTracker.highlight_tab_with_pulse(tab_control, tab_id)
 
-# Обработчик изменения валюты
-func _on_currency_changed(_new_amount: int) -> void:
-	# Обновляем состояние всех кнопок "Купить" на текущей вкладке
-	_update_buy_buttons()
-
-# Обновление состояния кнопок "Купить" на текущей вкладке
-func _update_buy_buttons() -> void:
-	# Получаем текущую активную вкладку
-	var current_tab = tab_container.get_current_tab_control()
-	if not current_tab:
-		return
-	
-	# Проверяем, что у вкладки есть необходимые мета-данные
-	if not current_tab.has_meta("list_container"):
-		return
-	
-	# Получаем контейнер для рендеринга
-	var list_container = current_tab.get_meta("list_container", null)
-	if not list_container:
-		return
-	
-	# Проходим по всем элементам апгрейдов и обновляем кнопки
-	for item_container in list_container.get_children():
-		if not is_instance_valid(item_container):
-			continue
-		
-		# Ищем кнопку "Купить" в контейнере
-		var buy_button = _find_buy_button(item_container)
-		if not buy_button:
-			continue
-		
-		# Получаем ID апгрейда из мета-данных кнопки
-		var upg_id: String = buy_button.get_meta("upgrade_id", "")
-		if upg_id.is_empty():
-			continue
-		
-		# Получаем данные апгрейда
-		var data: Dictionary = upgrades.get(upg_id, {})
-		if data.is_empty():
-			continue
-		
-		# Пересчитываем стоимость
-		var cost: int = _calc_cost(upg_id, data)
-		
-		# Обновляем состояние кнопки
-		var was_disabled: bool = buy_button.disabled
-		buy_button.disabled = GameManager.current_currency < cost
-		
-		# Обновляем визуальное состояние (прозрачность) если изменилось
-		if was_disabled != buy_button.disabled:
-			buy_button.modulate.a = BUTTON_ENABLED_ALPHA if not buy_button.disabled else BUTTON_DISABLED_ALPHA
-
-# Поиск кнопки "Купить" в контейнере элемента апгрейда
-func _find_buy_button(item_container: Control) -> Button:
-	# Ищем кнопку среди дочерних элементов (кнопка - прямой дочерний элемент HBoxContainer)
-	for child in item_container.get_children():
-		if child is Button and child.text == "Купить":
-			return child
-	
-	return null
-
 # Очистка при уничтожении
 func _exit_tree() -> void:
-	# Сигналы автоматически отключаются при уничтожении узла, но явное отключение не помешает
-	if EventBus.currency_changed.is_connected(_on_currency_changed):
-		EventBus.currency_changed.disconnect(_on_currency_changed)
-	
 	# Останавливаем все активные Tween анимации
 	if _show_tween:
 		_show_tween.kill()

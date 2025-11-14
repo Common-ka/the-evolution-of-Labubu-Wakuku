@@ -36,6 +36,7 @@ AchievementPopup="*res://scenes/ui/achievement_popup.tscn"
 SoundManager="*res://scripts/autoload/sound_manager.gd"
 TweenManager="*res://scripts/autoload/tween_manager.gd"
 ClickTracker="*res://scripts/autoload/click_tracker.gd"
+YandexSDK="*res://addons/godot-yandex-games-sdk-main/yandex_sdk.gd"
 
 [debug]
 
@@ -55,6 +56,10 @@ window/stretch/mode="canvas_items"
 interface/editor/screen=0
 interface/editor/show_script_button=true
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/godot-yandex-games-sdk-main/plugin.cfg")
+
 [export]
 
 filter/export_resources=true
@@ -73,4 +78,5 @@ common/physics_ticks_per_second=30
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+textures/vram_compression/import_etc2_astc=true
 renderer/rendering/driver="GLES2"

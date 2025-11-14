@@ -34,6 +34,9 @@ func _ready() -> void:
 	EventBus.upgrade_purchased.connect(_on_upgrade_purchased)
 	EventBus.particle_effect_requested.connect(_on_particle_effect_requested)
 	
+	# Инициализация Yandex SDK (ШАГ 1: Базовая инициализация)
+	_init_yandex_sdk()
+	
 	# Запуск авто-кликов если есть
 	if auto_click_rate > 0:
 		auto_click_timer.start()
@@ -286,6 +289,39 @@ func _on_auto_click_timer_timeout() -> void:
 		# Рассчитываем значение автоклика с учетом всех множителей
 		var auto_click_value = int(ceil(auto_click_rate * global_multiplier))
 		add_currency(auto_click_value)
+
+# ШАГ 1: Базовая инициализация Yandex SDK
+func _init_yandex_sdk() -> void:
+	# Проверяем доступность YandexSDK
+	if not YandexSDK:
+		print("[YandexSDK] YandexSDK не найден в autoload")
+		return
+	
+	# Проверяем, работает ли SDK на текущей платформе
+	if not YandexSDK.is_working():
+		print("[YandexSDK] SDK не работает на текущей платформе (не Яндекс Игры)")
+		return
+	
+	print("[YandexSDK] Начинаем инициализацию SDK...")
+	
+	# Подключаем сигнал инициализации для отслеживания
+	YandexSDK.game_initialized.connect(_on_yandex_game_initialized)
+	
+	# Инициализируем SDK
+	YandexSDK.init_game()
+	
+
+# Обработчик успешной инициализации SDK
+func _on_yandex_game_initialized() -> void:
+	print("[YandexSDK] SDK успешно инициализирован!")
+	print("[YandexSDK] is_game_initialized: ", YandexSDK.is_game_initialized)
+	print("[YandexSDK] app_id: ", YandexSDK.app_id)
+	print("[YandexSDK] lang: ", YandexSDK.lang)
+	print("[YandexSDK] tld: ", YandexSDK.tld)
+	
+	# Уведомляем SDK о готовности игры (убирает экран загрузки)
+	YandexSDK.game_ready()
+	print("[YandexSDK] game_ready() вызван - экран загрузки должен исчезнуть")
 
 # Получить данные апгрейда из JSON файла
 func _get_upgrade_data(upgrade_id: String) -> Dictionary:
