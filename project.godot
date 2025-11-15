@@ -36,6 +36,7 @@ AchievementPopup="*res://scenes/ui/achievement_popup.tscn"
 SoundManager="*res://scripts/autoload/sound_manager.gd"
 TweenManager="*res://scripts/autoload/tween_manager.gd"
 ClickTracker="*res://scripts/autoload/click_tracker.gd"
+FontManager="*res://scripts/autoload/font_manager.gd"
 YandexSDK="*res://addons/godot-yandex-games-sdk-main/yandex_sdk.gd"
 
 [debug]
