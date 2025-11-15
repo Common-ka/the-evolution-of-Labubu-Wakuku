@@ -4,12 +4,14 @@ extends Control
 
 # Ссылки на кнопки
 @onready var continue_button: Button = $ButtonsContainer/ContinueButton
+@onready var new_game_button: Button = $ButtonsContainer/NewGameButton
 @onready var achievements_button: Button = $ButtonsContainer/AchievementsButton
 @onready var settings_button: Button = $ButtonsContainer/SettingsButton
 
 func _ready() -> void:
 	# Подключение сигналов кнопок
 	continue_button.pressed.connect(_on_continue_button_pressed)
+	new_game_button.pressed.connect(_on_new_game_button_pressed)
 	achievements_button.pressed.connect(_on_achievements_button_pressed)
 	settings_button.pressed.connect(_on_settings_button_pressed)
 	
@@ -25,6 +27,15 @@ func _on_continue_button_pressed() -> void:
 	
 	# Загружаем сохранение
 	SaveSystem.load_game()
+	
+	# Переходим к игровой сцене
+	change_scene_to_game()
+
+# Обработка нажатия "Новая игра"
+func _on_new_game_button_pressed() -> void:
+	# Сбрасываем игровое состояние
+	if GameManager:
+		GameManager.reset_game()
 	
 	# Переходим к игровой сцене
 	change_scene_to_game()
